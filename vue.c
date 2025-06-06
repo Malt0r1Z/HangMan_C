@@ -41,14 +41,15 @@ void init_display(int argc, char *argv[], void *d) {
         BRejouer;   // le bouton Rejouer pour recommencer une partie
 
     // Création des boutons
-    BMenu = MakeButton("Menu", menu_cb, d);
-    BAide = MakeButton("Aide", aide_cb, d);
+    BMenu = MakeButton("Menu", menu, d);
+    BAide = MakeButton("Aide", aide, d);
+    BRejouer = MakeButton("Rejouer", rejouer, d);
 
     // Zone de dessin centrale pour le pendu
     ZoneDessin = MakeDrawArea(LARGEUR_FENETRE, 200, DrawHangman, d);
 
     // Zone pour les lettres à deviner, centrée sous le pendu
-    ZoneLettres = MakeLabel("A _ _ _ _ _ Z"); // À remplacer dynamiquement
+    ZoneLettres = MakeLabel(" _ _ _ _ _ _"); 
 
     // Placement des widgets
     // Ligne du haut : Menu à gauche, Aide à droite
