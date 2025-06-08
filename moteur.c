@@ -168,4 +168,4 @@ int validite_lettre(Partie *p,char choix) {
     //Le nombre d'erreurs est incrémenté
     return valide;
 }
-/*
+
