@@ -72,11 +72,11 @@ char* randomMot(const Liste l){
     return ieme(l,positionMot);
 }
 
-int main(void){
+/*int main(void){
     // Exemple d'utilisation de getDico et randomMot
     Liste dico = getDico("dico_fr.txt");
     
     char *mot = randomMot(dico);
     printf("Mot aléatoire choisi : %s\n", mot); 
     return EXIT_SUCCESS;
-}
+}*/

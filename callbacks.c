@@ -1,7 +1,7 @@
 /*
  * callbacks.c
  *
- * Khady Ndaye DIOP & Alex MEURILLON ELSE3
+ * Ndeye khady DIOP & Alex MEURILLON ELSE3
 */
 
 #include <stdio.h>

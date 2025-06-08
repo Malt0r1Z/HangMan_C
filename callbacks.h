@@ -1,7 +1,7 @@
 /*
  * callbacks.h
  *
- * Khady Ndaye DIOP & Alex MEURILLON ELSE3
+ *  Ndeye khady DIOP & Alex MEURILLON ELSE3
 */
 
 #pragma once

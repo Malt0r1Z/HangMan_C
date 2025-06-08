@@ -1,7 +1,7 @@
 /*
  * vue.c
  *
- * Khady Ndaye DIOP & Alex MEURILLON ELSE3
+ * Khady DIOP & Alex MEURILLON ELSE3
 */
 
 #include <stdio.h>

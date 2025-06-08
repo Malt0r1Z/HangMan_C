@@ -31,7 +31,7 @@ Partie *init_Partie(char *dictionnaire) {
     strcpy(p->mot_cherche, mot);
     //allocation dynamique du mot à trouver 
     p->mot_affiche = malloc(longeur_mot + 1);
-    for(int i=1;i<=longeur_mot ;i++) p->mot_affiche[i-1] = 'x';//caracteres x pour masquer le mot a trouver 
+    for(int i=1;i<=longeur_mot ;i++) p->mot_affiche[i-1] = '_';//caracteres x pour masquer le mot a trouver 
     p->mot_affiche[longeur_mot] = '\0'; 
     for (int i = 0; i < 26; i++) {
         //tableau des lettres deja utilisées intialisé à zéro, car début du jeu  
@@ -120,7 +120,6 @@ int gagnee(Partie *p) {
     return strcmp(p->mot_cherche,p->mot_affiche) == 0;
 }
 
-
 /*
  * Rôle : Affiche le mota trouver en remplacant les lettresnon trouvées par des 'x'
  *       Antécédent : la partie doit être initialisée
@@ -136,7 +135,7 @@ void mot_en_cours(const Partie *p) {
 *Role : Verifie si la lettre choisie est valide ou pas en l'ajoutant si oui au tableau des lettres deja utilisés
 */
 int validite_lettre(Partie *p,char choix) {
-   // choix = tolower(choix); on convertis en minuscule pour pouvoir gerer les lettres saisies
+   choix = tolower(choix); //on convertis en minuscule pour pouvoir gerer les lettres saisies
    //La lettre est convertie en minuscule 
    
     if (choix<'a'||choix>'z') {
@@ -144,20 +143,20 @@ int validite_lettre(Partie *p,char choix) {
          //Si la lettre n'est pas dans l'alphabet =>lettre invalide
     }
    //La lettre est dans l'alphabet
-    int index = choix-'a';
+    int indice = choix-'a';
     //On vérifie si la lettre à deja ete proposée
-    if (p->alphabet[index]){
+    if (p->alphabet[indice]){
         return 0; 
         //La lettre a deja été proposée
     } 
     //la lettre n'a pas été proposée
-    p->alphabet[index] = 1; 
+    p->alphabet[indice] = 1; 
     //On met la lettre dans le tableau des lettres utilisées
     int valide=0;
     for (int i=0;p->mot_cherche[i] != '\0'; i++) {
         if (p->mot_cherche[i]==choix) {
             p->mot_affiche[i]=choix;
-            //On remplace le 'x' par la lettre valide
+            //On remplace le '_' par la lettre valide
             //On incrémente le nombre de lettres trouvées
             p->nblettres_trouve++;
             valide=1;
@@ -169,3 +168,14 @@ int validite_lettre(Partie *p,char choix) {
     return valide;
 }
 
+/*Utilisé  pour Tester le fonctonnement du jeu
+ * Rôle : Affiche l'etat du jeu
+ * Antécédent : la partie doit être initialisée
+ */
+/*void statut_joueur(Partie *p) {
+    printf("Statut du joueur:\n");
+    mot_en_cours(p);
+    printf("Lettres utilisées:");
+    lettre_utilisee(p);
+    printf("Le nombre d'erreurs: %d/%d\n", p->nb_erreurs, ERREUR_MAXIMUM);
+}*/
