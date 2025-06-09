@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "moteur.h"
+#include "data.h"
 #include "readFile.h"
 #include "liste.h"
 
-#define ERREUR_MAXIMUM  6
 
+int ERREUR_MAXIMUM = 6; // Nombre maximum d'erreurs autorisées
 /*
 *Initialise une nouvelle partie du jeu
 Elle charge un dictionnaire et,tire un mot aléatoirement et initialise les variables de la partie
@@ -46,12 +46,16 @@ Partie *init_Partie(char *dictionnaire) {
     //pointeur vers la partie initialisée 
 }
 
+
+
 /*
  Rôle :Initialise une partie en utilisant le dictionnaire francais 
  */
 Partie* init_Partie_fr(void) {
     return init_Partie("dico_fr.txt");
 }
+
+
 /*
  Rôle :Initialise une partie en utilisant le dictionnaire anglais
  */
@@ -60,19 +64,34 @@ Partie* init_Partie_ang(void) {
 }
 
 
+
 /*
- Rôle :Vérifie si la partie est finie, soit si le mot est trouvé soit si le nombre maximum d'erreurs est atteint
+ Rôle :
  */
-void fin_partie(Partie *p) {
+int erreurs(const Partie *p) {
+    return p->nb_erreurs;
+}
+
+
+
+
+/*
+ Rôle :Vérifie si la partie est finie, soit si le mot est trouvé (renvoie 0)soit si le nombre maximum d'erreurs est atteint(renvoie 1)
+ */
+int fin_partie(Partie *p) {
     if (p->nblettres_trouve == strlen(p->mot_cherche)) {
         // Le mot a été trouvé
-            printf("Gagné! Le mot etait bien:  %s\n", p->mot_cherche);
-
-    } else if (p->nb_erreurs >= ERREUR_MAXIMUM) {
+        return 0 ;
+    } else if (p->nb_erreurs >= get_erreur_max()) {
         // Le nombre maximum d'erreurs est atteint
-        printf("Perdu ! Le mot était: %s\n", p->mot_cherche);
+       return 1;
     }
+    //La partie est toujours en cours 
+    return -1;
 }
+
+
+
 
 
 /*
@@ -80,26 +99,32 @@ void fin_partie(Partie *p) {
  */
 void quitter_partie(Partie *p) {
     // Libération de la mémoire utilisée pour la partie
-    if (p) {
+    if ((fin_partie(p)== 0) || (fin_partie(p)== 1)) {
         free(p->mot_affiche);
         free(p->mot_cherche);
         free(p);
     }
-    printf("Vous avez quitté la partie :( \n");
 }
+
+
+
+
 
 /*
  Rôle :Affiche les lettres déjà proposées par le joueur
  */
- void lettre_utilisee(Partie *p){
-    printf("Lettres proposées : ");
+ void lettre_utilisee(const Partie *p, char *lettres_impossibles){
+    int k=0;
     for (int i=0;i<26;i++) {
+        
         if (p->alphabet[i]) {
-            printf("%c ", 'a' + i);
+            lettres_impossibles[k++]= 'a' + i;
+            //On ajoute la lettre dans le tableau des lettres utilisées
         }
     }
-    printf("\n");
+    lettres_impossibles[k] = '\0'; // Terminer la chaîne de caractères
  }
+
 
 
 
@@ -109,8 +134,12 @@ void quitter_partie(Partie *p) {
 */
 int terminee(Partie *p) {
     //La partie est terminée si le mot a été trouvé ou si le nombre d'erreurs= ERREUR_MAXIMUM 
-    return gagnee(p)||(p->nb_erreurs >= ERREUR_MAXIMUM);
+    return gagnee(p)||(p->nb_erreurs >= get_erreur_max());
 }
+
+
+
+
 
 /*
 *Role :Renvoie vraie si le mot a été trouvé, faux sinon
@@ -120,17 +149,21 @@ int gagnee(Partie *p) {
     return strcmp(p->mot_cherche,p->mot_affiche) == 0;
 }
 
+
+
+
 /*
  * Rôle : Affiche le mota trouver en remplacant les lettresnon trouvées par des 'x'
  *       Antécédent : la partie doit être initialisée
  */
-void mot_en_cours(const Partie *p) {
-    printf("Mot à trouver:");
-    for (int i=0;p->mot_affiche[i]!='\0'; i++) {
-        printf("%c",p->mot_affiche[i]);
-    }
-    printf("\n");
+const char *mot_en_cours(const Partie *p) {
+    return p->mot_affiche;
 }
+
+
+
+
+
 /*
 *Role : Verifie si la lettre choisie est valide ou pas en l'ajoutant si oui au tableau des lettres deja utilisés
 */
@@ -168,14 +201,19 @@ int validite_lettre(Partie *p,char choix) {
     return valide;
 }
 
-/*Utilisé  pour Tester le fonctonnement du jeu
- * Rôle : Affiche l'etat du jeu
- * Antécédent : la partie doit être initialisée
+//gestion des erreurs
+/*
+* Rôle : Définit le nombre maximum d'erreurs autorisées
+ *        Antécédent : valeur doit être un entier positif
  */
-/*void statut_joueur(Partie *p) {
-    printf("Statut du joueur:\n");
-    mot_en_cours(p);
-    printf("Lettres utilisées:");
-    lettre_utilisee(p);
-    printf("Le nombre d'erreurs: %d/%d\n", p->nb_erreurs, ERREUR_MAXIMUM);
-}*/
+
+void setErreur_max(int valeur) {
+    if (valeur>=1 && valeur<= 6)  ERREUR_MAXIMUM = valeur;
+}
+
+/*
+*Role : Renvoie le nombre maximum d'erreurs autorisées
+*/
+int get_erreur_max(void) {
+    return ERREUR_MAXIMUM;
+}

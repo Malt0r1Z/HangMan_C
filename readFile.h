@@ -1,7 +1,7 @@
 //
 // readFile.h
 //
-// Khady Ndaye DIOP & Alex MEURILLON ELSE3
+// Khady DIOP & Alex MEURILLON ELSE3
 
 #pragma once
 
