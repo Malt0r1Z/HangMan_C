@@ -17,12 +17,31 @@
 
 // Callback pour dessiner le pendu 
 void DrawHangman(Widget w, int width, int height, void *data) {
-    DrawCircle(w, width/2, height/3, 30); // Tête du pendu
-    DrawLine(w, width/2, height/3 + 30, width/2, height/3 + 100); // Corps
-    DrawLine(w, width/2, height/3 + 50, width/2 - 30, height/3 + 80); // Bras gauche
-    DrawLine(w, width/2, height/3 + 50, width/2 + 30, height/3 + 80); // Bras droit
-    DrawLine(w, width/2, height/3 + 100, width/2 - 30, height/3 + 130); // Jambe gauche
-    DrawLine(w, width/2, height/3 + 100, width/2 + 30, height/3 + 130); // Jambe droite
+    // Support du pendu (à gauche)
+    int base_x = width/4;
+    int base_y = height/6;
+    int poteau_haut = base_y;
+    int poteau_bas = height - 5;
+
+    // Base horizontale (Sol)
+    DrawLine(base_x - 40, poteau_bas, base_x + 40, poteau_bas);
+    // Poteau vertical
+    DrawLine(base_x, poteau_bas, base_x, poteau_haut); 
+    // Barre horizontale supérieure
+    DrawLine(base_x, poteau_haut, width/2, poteau_haut); 
+    // Barre pour soutenir le support
+    DrawLine(base_x + 20, poteau_bas, base_x, poteau_bas - 50);
+    // Petite barre verticale (corde)
+    DrawLine(width/2, poteau_haut, width/2, height/3);
+
+
+    // Tête du pendu sous forme de cercle 
+    DrawArc(width/2 - 15, height/3, 30, 30, 0, 360);
+    DrawLine(width/2, height/3 + 30, width/2, height/3 + 100); // Corps
+    DrawLine(width/2, height/3 + 50, width/2 - 30, height/3 + 80); // Bras gauche
+    DrawLine(width/2, height/3 + 50, width/2 + 30, height/3 + 80); // Bras droit
+    DrawLine(width/2, height/3 + 100, width/2 - 30, height/3 + 130); // Jambe gauche
+    DrawLine(width/2, height/3 + 100, width/2 + 30, height/3 + 130); // Jambe droite
 }
 
 // Fonction pour afficher les lettres à deviner 
@@ -37,28 +56,37 @@ void init_display(int argc, char *argv[], void *d) {
         ZoneDessin, // Zone pour dessiner le pendu
         ZoneLettres,// Zone pour afficher les lettres à deviner
         BMenu,      // le bouton Menu pour accéder au menu
+        BSetErreur, // le bouton pour configurer le nombre d'erreurs
         BAide,      // le bouton Aide pour afficher l'aide
         BRejouer;   // le bouton Rejouer pour recommencer une partie
 
     // Création des boutons
     BMenu = MakeButton("Menu", menu, d);
+    BSetErreur = MakeButton("Niveau de difficulte", choix_difficulte, d);
     BAide = MakeButton("Aide", aide, d);
     BRejouer = MakeButton("Rejouer", rejouer, d);
 
+    // Placement des widgets
+    // Nous utilisons des Widgets Espace afin de placer les widgets à notre guise
+    Widget Espace_haut = MakeButton("                                            ", NULL, NULL); // Espaces
+    Widget Espace_bas = MakeButton("                                   ", NULL, NULL); // Espaces
+    // Ligne du haut : Menu à gauche, Aide à droite, Rejouer à droite de Aide
+    SetWidgetPos(BMenu,  NO_CARE, NULL, NO_CARE, NULL);
+    SetWidgetPos(BSetErreur, PLACE_RIGHT, BMenu, NO_CARE, NULL);
+    SetWidgetPos(Espace_haut, PLACE_RIGHT, BSetErreur, NO_CARE, NULL);
+    SetWidgetPos(BAide,  PLACE_RIGHT, Espace_haut, NO_CARE, NULL);
+    SetWidgetPos(BRejouer, PLACE_RIGHT, BAide, NO_CARE, NULL);
+
     // Zone de dessin centrale pour le pendu
     ZoneDessin = MakeDrawArea(LARGEUR_FENETRE, 200, DrawHangman, d);
+    SetWidgetPos(ZoneDessin, PLACE_UNDER, BMenu, NO_CARE, NULL);
+
 
     // Zone pour les lettres à deviner, centrée sous le pendu
     ZoneLettres = MakeLabel(" _ _ _ _ _ _"); 
-
-    // Placement des widgets
-    // Ligne du haut : Menu à gauche, Aide à droite
-    SetWidgetPos(BMenu,  PLACE_ABOVE, ZoneDessin, NO_CARE, NULL);
-    SetWidgetPos(BAide,  PLACE_RIGHT, ZoneDessin, PLACE_ABOVE, ZoneDessin);
-
-    // Zone de dessin centrée (par défaut, premier widget)
-    // Zone des lettres sous la zone de dessin, centrée
-    SetWidgetPos(ZoneLettres, PLACE_UNDER, ZoneDessin, NO_CARE, NULL);
+    // Zone des lettres sous la zone de dessin, centrée horizontalement
+    SetWidgetPos(Espace_bas, NO_CARE, NULL, PLACE_UNDER, ZoneDessin);
+    SetWidgetPos(ZoneLettres, PLACE_RIGHT, Espace_bas, PLACE_UNDER, ZoneDessin);
 
     // Couleurs et affichage
     GetStandardColors();

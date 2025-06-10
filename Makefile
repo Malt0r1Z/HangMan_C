@@ -3,26 +3,27 @@
 
 # Variables
 CC = gcc                     # Compilateur C
-CFLAGS = -Wall               # Options de compilation (warnings)
-LDFLAGS =                    # Options de l'éditeur de liens
-SRC = callbacks.c data.c liste.c main.c readFile.c vue.c   # Fichiers sources
-PROG = cal                   # Nom de l'exécutable
+CFLAGS = -g -Wall               # Options de compilation (warnings)
+LDFLAGS = -lsx                   # Options de l'éditeur de liens
+SRC = callbacks.c data.c hangman.c liste.c readFile.c vue.c   # Fichiers sources
+PROG = hangman                   # Nom de l'exécutable
 OBJS = $(SRC:.c=.o)          # Fichiers objets générés
 
-.SUFFIXES: .c .o             # Extensions reconnues
+.SUFFIXES: .c .o             # Lien entre les suffixes
 
 # Cible par défaut
 all: $(PROG)
 
-# Édition de liens
+# étapes de compilation et d'édition de liens
+# $@ la cible  $^ toutes les dépendances	
 $(PROG): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $^  # $@ = cible, $^ = dépendances
+	$(CC)  -o $@ $^ $(LDFLAGS)
 
 # Dépendances spécifiques
 callbacks.o: callbacks.h data.h liste.h 
 data.o: data.h readFile.h liste.h
 liste.o: liste.h
-# main.o: ?????
+hangman.o: data.h vue.h
 readFile.o: readFile.h liste.h
 vue.o: vue.h data.h callbacks.h
 
