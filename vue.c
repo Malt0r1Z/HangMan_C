@@ -67,7 +67,7 @@ void updateDrawHangman(int erreurs) {
  * Antécédent : Le widget doit être créé et affiché
 */
 void clearHangman(void) {
-    clearDrawArea(); // Efface la zone de dessin
+    ClearDrawArea(); // Efface la zone de dessin
     // Redessine la base du pendu
     DrawHangmanBase(ZoneDessin, LARGEUR_FENETRE, 200, NULL);
 }
