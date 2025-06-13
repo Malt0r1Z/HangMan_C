@@ -8,7 +8,7 @@
 
 extern void init_display(int, char *[], void *);
 extern void DrawHangmanBase(Widget, int, int , void *);
-extern void clearHangman(int);
+extern void updateDrawHangman(int);
 extern void clearHangman();
 extern void AfficherLettres();
 
