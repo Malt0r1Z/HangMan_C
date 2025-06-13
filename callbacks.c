@@ -116,7 +116,7 @@ void initGame() {
         jeu=init_Partie_fr();
     }
     else {
-        printf("Initialisation du jeu en anglais\n");
+        jeu=init_Partie_ang();
     }
 }
 
@@ -199,7 +199,8 @@ void saisie(Widget w, char* key , void *d) {
       validite_lettre(jeu,lettre);  // Met à jour le mot et les erreurs
       AfficherLettres();  
       SetStringEntry(ZoneSaisie, ""); // Vide la zone de saisie après chaque lettre
-
+      // Mettre à jour la zone de dessin après chaque saisie
+      updateDrawHangman(erreurs(jeu));
               //==============AJOUTER ICI LA MISE À JOUR DE ZONEDESSIN==============
 
         }

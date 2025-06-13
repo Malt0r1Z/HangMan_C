@@ -21,8 +21,10 @@ Widget ZoneSaisie;
 Widget ZoneLettres;
 
 
-// Callback pour dessiner le pendu 
-void DrawHangman(Widget w, int width, int height, void *data) {
+/*
+ * Rôle : Callback pour dessiner le pendu 
+*/
+void DrawHangmanBase(Widget w, int width, int height, void *data) {
     // Support du pendu (à gauche)
     int base_x = width/4;
     int base_y = height/6;
@@ -39,17 +41,26 @@ void DrawHangman(Widget w, int width, int height, void *data) {
     DrawLine(base_x + 20, poteau_bas, base_x, poteau_bas - 50);
     // Petite barre verticale (corde)
     DrawLine(width/2, poteau_haut, width/2, height/3);
-
-
-    // Tête du pendu sous forme de cercle 
-    DrawArc(width/2 - 15, height/3, 30, 30, 0, 360);
-    DrawLine(width/2, height/3 + 30, width/2, height/3 + 100); // Corps
-    DrawLine(width/2, height/3 + 50, width/2 - 30, height/3 + 80); // Bras gauche
-    DrawLine(width/2, height/3 + 50, width/2 + 30, height/3 + 80); // Bras droit
-    DrawLine(width/2, height/3 + 100, width/2 - 30, height/3 + 130); // Jambe gauche
-    DrawLine(width/2, height/3 + 100, width/2 + 30, height/3 + 130); // Jambe droite
 }
 
+/*
+ * Rôle : Fonction pour dessiner le pendu en fonction du nombre d'erreurs
+*/
+
+void updateDrawHangman(int erreurs) {
+    int erreur = erreurs;
+    int width = LARGEUR_FENETRE;
+    int height = 200; 
+
+    if (erreur >=1) DrawArc(width/2 - 15, height/3, 30, 30, 0, 360); // Tête du pendu sous forme de cercle 
+    if (erreur >=2) DrawLine(width/2, height/3 + 30, width/2, height/3 + 100); // Corps
+    if (erreur >=3) DrawLine(width/2, height/3 + 50, width/2 - 30, height/3 + 80); // Bras gauche
+    if (erreur >=4) DrawLine(width/2, height/3 + 50, width/2 + 30, height/3 + 80); // Bras droit
+    if (erreur >=5) DrawLine(width/2, height/3 + 100, width/2 - 30, height/3 + 130); // Jambe gauche
+    if (erreur >=6) DrawLine(width/2, height/3 + 100, width/2 + 30, height/3 + 130); // Jambe droite
+    if (erreur >=7) DrawLine(width/2 - 7, height/3 + 10, width/2 - 3, height/3 + 10); // Oeil gauche
+    if (erreur >=8) DrawLine(width/2 + 3, height/3 + 10, width/2 + 7, height/3 + 10); // Oeil droit
+}
 
 
 // Fonction pour afficher les lettres à deviner 
@@ -96,9 +107,15 @@ void init_display(int argc, char *argv[], void *d) {
     ZoneSaisie=MakeStringEntry(NULL, 100, saisie, d);
   
 
+    // Couleurs
     GetStandardColors();
     int fond_saisie = GetRGBColor(220, 200, 220);  // RGB entre 0-255
-    SetBgColor(ZoneSaisie, fond_saisie);
+    int fond_boutons = GetRGBColor(153, 204, 255); // Fond bleu clair pour le dessin
+    SetBgColor(BMenu, fond_boutons); // Couleur de fond du bouton Menu
+    SetBgColor(BSetErreur, fond_boutons); 
+    SetBgColor(BAide, fond_boutons); 
+    SetBgColor(BRejouer, fond_boutons); 
+    SetBgColor(ZoneSaisie, fond_saisie); // Couleur de fond de la zone de saisie
 
     ZoneLettres = MakeLabel(" _ _ _ _ _ _"); 
     XFont font = GetFont("12x24");  // Pour augmenter l'affichage du mot
