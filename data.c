@@ -20,7 +20,7 @@ Partie *init_Partie(char *dictionnaire) {
     if (!p) return NULL;
     Liste dico = getDico(dictionnaire);
     char *mot = randomMot(dico);  // mot aléatoire depuis le dictionnaire
-
+    printf("Le mot choisi est : %s\n", mot); // DEBUG
     //mot est tiré au hasard du dictionnaire 
     if(!mot) {
         free(p);
@@ -73,7 +73,7 @@ int erreurs(const Partie *p) {
     return p->nb_erreurs;
 }
 
-
+/*
 int fin_partie(Partie *p) {
     if (!p || !p->mot_cherche) {
         fprintf(stderr, "Erreur: partie ou mot_cherche NULL dans fin_partie\n");
@@ -86,7 +86,7 @@ int fin_partie(Partie *p) {
     }
     return -1;
 }
-
+*/
 
 /*
  Rôle :Vérifie si la partie est finie, soit si le mot est trouvé (renvoie 0)soit si le nombre maximum d'erreurs est atteint(renvoie 1)
@@ -116,11 +116,11 @@ int fin_partie(Partie *p) {
  */
 void quitter_partie(Partie *p) {
     // Libération de la mémoire utilisée pour la partie
-    int valeur_fin_partie = fin_partie(p);
-    if ((valeur_fin_partie == 0) || (valeur_fin_partie == 1)) {
-        free(p->mot_affiche);
-        free(p->mot_cherche);
+    if (p) {
+        if (p->mot_cherche) free(p->mot_cherche);
+        if (p->mot_affiche) free(p->mot_affiche);
         free(p);
+        p = NULL; // Mettre le pointeur à NULL pour éviter les accès ultérieurs
     }
 }
 

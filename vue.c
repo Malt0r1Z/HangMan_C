@@ -62,6 +62,15 @@ void updateDrawHangman(int erreurs) {
     if (erreur >=8) DrawLine(width/2 + 3, height/3 + 10, width/2 + 7, height/3 + 10); // Oeil droit
 }
 
+/*
+ * Rôle : Efface le dessin du pendu
+ * Antécédent : Le widget doit être créé et affiché
+*/
+void clearHangman(void) {
+    clearDrawArea(); // Efface la zone de dessin
+    // Redessine la base du pendu
+    DrawHangmanBase(ZoneDessin, LARGEUR_FENETRE, 200, NULL);
+}
 
 // Fonction pour afficher les lettres à deviner 
 void AfficherLettres(void) {
@@ -90,7 +99,7 @@ void init_display(int argc, char *argv[], void *d) {
     // Placement des widgets
     // Nous utilisons des Widgets Espace afin de placer les widgets à notre guise
     Widget Espace_haut = MakeButton("                                            ", NULL, NULL); // Espaces
-    Widget Espace_bas = MakeButton("                                   ", NULL, NULL); // Espaces
+    Widget Espace_bas = MakeButton("                      ", NULL, NULL); // Espaces
     // Ligne du haut : Menu à gauche, Aide à droite, Rejouer à droite de Aide
     SetWidgetPos(BMenu,  NO_CARE, NULL, NO_CARE, NULL);
     SetWidgetPos(BSetErreur, PLACE_RIGHT, BMenu, NO_CARE, NULL);
@@ -99,7 +108,7 @@ void init_display(int argc, char *argv[], void *d) {
     SetWidgetPos(BRejouer, PLACE_RIGHT, BAide, NO_CARE, NULL);
 
     // Zone de dessin centrale pour le pendu
-    ZoneDessin = MakeDrawArea(LARGEUR_FENETRE, 200, DrawHangman, d);
+    ZoneDessin = MakeDrawArea(LARGEUR_FENETRE, 200, DrawHangmanBase, d);
     SetWidgetPos(ZoneDessin, PLACE_UNDER, BMenu, NO_CARE, NULL);
 
 

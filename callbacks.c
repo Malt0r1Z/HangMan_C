@@ -128,9 +128,10 @@ void initGame() {
 void rejouer(Widget w, void *d){
     //J'ai ajouté cette ligne, car il faut libérer la mémoire de la partie précédente avant d'en initialiser une nouvelle
     quitter_partie(jeu); // Libère la mémoire de la partie précédente
+    clearHangman(); // Efface le dessin du pendu
     initGame(); 
 
-    CloseWindow();
+    //CloseWindow();
 }
 /*
   Rôle :Menu, affiche une fenetre avec les options
