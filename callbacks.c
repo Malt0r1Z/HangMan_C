@@ -189,14 +189,19 @@ void aide(Widget w, void *d){
 
 
 void saisie(Widget w, char* key , void *d) {
-      if (jeu && key &&   key[0]!= '\0') {
-        char lettre = tolower(key[0]);
-        validite_lettre(jeu,lettre);  // Met à jour le mot et les erreurs
-        AfficherLettres();  
-        SetStringEntry(ZoneSaisie, ""); // Vide la zone de saisie après chaque lettre
-              
-       // Redessiner le pendu si erreur
+  if (terminee(jeu)){
+      //Vider à chaque fois que le joueur tente de saisir 
+        SetStringEntry(ZoneSaisie, ""); 
+        return;
+   }
+  else if ( key &&   key[0]!= '\0') {
+      char lettre = tolower(key[0]);
+      validite_lettre(jeu,lettre);  // Met à jour le mot et les erreurs
+      AfficherLettres();  
+      SetStringEntry(ZoneSaisie, ""); // Vide la zone de saisie après chaque lettre
+
+              //==============AJOUTER ICI LA MISE À JOUR DE ZONEDESSIN==============
+
         }
-   //if(terminee(jeu))..........;TROUVER UNE FONCTION QUI BLOQUE LA SAISIE 
-}
+    }
   

@@ -93,10 +93,18 @@ void init_display(int argc, char *argv[], void *d) {
 
 
     // Zone pour les lettres à deviner, centrée sous le pendu
-    ZoneSaisie=MakeStringEntry(NULL, 4, saisie, d);
+    ZoneSaisie=MakeStringEntry(NULL, 100, saisie, d);
+  
+
+    GetStandardColors();
+    int fond_saisie = GetRGBColor(220, 200, 220);  // RGB entre 0-255
+    SetBgColor(ZoneSaisie, fond_saisie);
 
     ZoneLettres = MakeLabel(" _ _ _ _ _ _"); 
+    XFont font = GetFont("12x24");  // Pour augmenter l'affichage du mot
+    SetWidgetFont(ZoneLettres, font);
     LabelZone=MakeLabel("Saisir une lettre :");
+     SetWidgetFont(LabelZone, font);
     // Zone des lettres sous la zone de dessin, centrée horizontalement
     SetWidgetPos(LabelZone,PLACE_UNDER,ZoneLettres,NO_CARE,NULL);
     SetWidgetPos(ZoneSaisie, PLACE_UNDER, ZoneLettres, PLACE_RIGHT, LabelZone);
