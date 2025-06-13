@@ -7,8 +7,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <libsx.h>
+#include <ctype.h>
 #include "callbacks.h"
 #include "data.h"
+#include "vue.h"
 
 
 Partie *jeu=NULL; // Pointeur vers la partie en cours
@@ -71,19 +73,25 @@ void appliquer_erreur_max(Widget w, void *d) {
     }
     //CloseWindow();
 }
+// En haut de callbacks.c (hors de toute autre fonction)
+static void bouton_cb(Widget w, void *d) {
+    char *difficulte = (char*)d;
+    CloseWindow();
+    printf("Difficulté choisie : %s\n", difficulte);
+}
 
 /*
  * Rôle : Affiche à l'écran une fenêtre pour choisir le niveau de difficulté
 */
 void choix_difficulte(Widget w, void *d) {
-    char *difficulte = NULL;
+   //char *difficulte = NULL;
 
     // Callback interne pour chaque bouton
-    void bouton_cb(Widget w, void *d) {
-        difficulte = (char*)d;
-        CloseWindow();
-        printf("Difficulté choisie : %s\n", difficulte);
-    }
+ //   void bouton_cb(Widget w, void *d) {
+        //difficulte = (char*)d;
+      //  CloseWindow();
+        //printf("Difficulté choisie : %s\n", difficulte);
+   // }
 
     MakeWindow("Choix de la difficulté", SAME_DISPLAY, EXCLUSIVE_WINDOW);
     Widget bFacile = MakeButton("Facile", bouton_cb, "Facile");
@@ -135,9 +143,9 @@ void menu(Widget w, void *d){
     descriptif = MakeLabel("Selectionnez votre langue preferee :");
     SetWidgetPos(descriptif, PLACE_UNDER, w, NO_CARE, NULL);
    
-    Widget BLangue_fr = MakeButton("Francais", setLangue_fr, NULL);
-    Widget BLangue_uk = MakeButton("Anglais", setLangue_uk, d);
-    Widget BAnnuler = MakeButton("Annuler", annuler, NULL);
+    Widget BLangue_fr = MakeButton("    Francais    ", setLangue_fr, NULL);
+    Widget BLangue_uk = MakeButton("    Anglais    ", setLangue_uk, d);
+    Widget BAnnuler = MakeButton("    Annuler    ", annuler, NULL);
     // Widget BErreurs= MakeButton("Configurer l'erreur  maximum ", erreur, NULL);
 
     SetWidgetPos(BLangue_fr, PLACE_UNDER, descriptif, NO_CARE, NULL);
@@ -178,3 +186,17 @@ void aide(Widget w, void *d){
     //ShowDisplay();
     //MainLoop();
 }
+
+
+void saisie(Widget w, char* key , void *d) {
+      if (jeu && key &&   key[0]!= '\0') {
+        char lettre = tolower(key[0]);
+        validite_lettre(jeu,lettre);  // Met à jour le mot et les erreurs
+        AfficherLettres();  
+        SetStringEntry(ZoneSaisie, ""); // Vide la zone de saisie après chaque lettre
+              
+       // Redessiner le pendu si erreur
+        }
+   //if(terminee(jeu))..........;TROUVER UNE FONCTION QUI BLOQUE LA SAISIE 
+}
+  

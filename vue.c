@@ -9,10 +9,16 @@
 #include <libsx.h>
 #include "data.h"
 #include "callbacks.h"
+#include "vue.h"
 
 #define LARGEUR_FENETRE 600
 #define HAUTEUR_FENETRE 400
 #define TAILLE_ZONE_LETTRES 300
+
+extern Partie *jeu;
+Widget ZoneDessin;
+Widget ZoneSaisie;
+Widget ZoneLettres;
 
 
 // Callback pour dessiner le pendu 
@@ -44,22 +50,26 @@ void DrawHangman(Widget w, int width, int height, void *data) {
     DrawLine(width/2, height/3 + 100, width/2 + 30, height/3 + 130); // Jambe droite
 }
 
-// Fonction pour afficher les lettres à deviner 
-void AfficherLettres(Widget w, char *mot, int *lettres_trouvees) {
-    printf("Mot à deviner : ");
-}
 
+
+// Fonction pour afficher les lettres à deviner 
+void AfficherLettres(void) {
+    if (jeu && ZoneLettres) {
+        const char *etat = mot_en_cours(jeu);
+        SetLabel(ZoneLettres, (char *)etat);
+    }
+}
 // Rôle: création et assemblage des widgets 
 void init_display(int argc, char *argv[], void *d) {
 
     Widget 
-        ZoneDessin, // Zone pour dessiner le pendu
-        ZoneLettres,// Zone pour afficher les lettres à deviner
+       // ZoneDessin, // Zone pour dessiner le pendu
+       // ZoneLettres,// Zone pour afficher les lettres à deviner
         BMenu,      // le bouton Menu pour accéder au menu
         BSetErreur, // le bouton pour configurer le nombre d'erreurs
         BAide,      // le bouton Aide pour afficher l'aide
-        BRejouer;   // le bouton Rejouer pour recommencer une partie
-
+        BRejouer,   // le bouton Rejouer pour recommencer une partie
+        LabelZone;
     // Création des boutons
     BMenu = MakeButton("Menu", menu, d);
     BSetErreur = MakeButton("Niveau de difficulte", choix_difficulte, d);
@@ -83,10 +93,16 @@ void init_display(int argc, char *argv[], void *d) {
 
 
     // Zone pour les lettres à deviner, centrée sous le pendu
+    ZoneSaisie=MakeStringEntry(NULL, 4, saisie, d);
+
     ZoneLettres = MakeLabel(" _ _ _ _ _ _"); 
+    LabelZone=MakeLabel("Saisir une lettre :");
     // Zone des lettres sous la zone de dessin, centrée horizontalement
+    SetWidgetPos(LabelZone,PLACE_UNDER,ZoneLettres,NO_CARE,NULL);
+    SetWidgetPos(ZoneSaisie, PLACE_UNDER, ZoneLettres, PLACE_RIGHT, LabelZone);
     SetWidgetPos(Espace_bas, NO_CARE, NULL, PLACE_UNDER, ZoneDessin);
     SetWidgetPos(ZoneLettres, PLACE_RIGHT, Espace_bas, PLACE_UNDER, ZoneDessin);
+    SetWidgetSize(ZoneLettres, 300, 50);
 
     // Couleurs et affichage
     GetStandardColors();

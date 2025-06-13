@@ -32,7 +32,7 @@ Partie *init_Partie(char *dictionnaire) {
     strcpy(p->mot_cherche, mot);
     //allocation dynamique du mot à trouver 
     p->mot_affiche = malloc(longueur_mot + 1);
-    for(int i=1;i<=longueur_mot ;i++) p->mot_affiche[i-1] = '_';//caracteres x pour masquer le mot a trouver 
+    for(int i=1;i<=longueur_mot ;i++) p->mot_affiche[i-1] = '_';//caracteres _ pour masquer le mot a trouver 
     p->mot_affiche[longueur_mot] = '\0'; 
     for (int i = 0; i < 26; i++) {
         //tableau des lettres deja utilisées intialisé à zéro, car début du jeu  
@@ -175,6 +175,7 @@ int gagnee(Partie *p) {
  *       Antécédent : la partie doit être initialisée
  */
 const char *mot_en_cours(const Partie *p) {
+     //printf("Affichage en cours : %s\n", p->mot_affiche); // DEBUG
     return p->mot_affiche;
 }
 
