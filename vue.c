@@ -81,8 +81,9 @@ void AfficherLettres(void) {
 }
 // Rôle: création et assemblage des widgets 
 void init_display(int argc, char *argv[], void *d) {
+        initGame(); //regle le soucis de la premiere partie qui crash mais lancement de deux partie
 
-    Widget 
+    Widget
        // ZoneDessin, // Zone pour dessiner le pendu
        // ZoneLettres,// Zone pour afficher les lettres à deviner
         BMenu,      // le bouton Menu pour accéder au menu
@@ -117,8 +118,8 @@ void init_display(int argc, char *argv[], void *d) {
   
 
     // Couleurs
-    GetStandardColors();
-    int fond_saisie = GetRGBColor(220, 200, 220);  // RGB entre 0-255
+
+    int fond_saisie = GetRGBColor(220, 200, 220);  // 
     int fond_boutons = GetRGBColor(153, 204, 255); // Fond bleu clair pour le dessin
     SetBgColor(BMenu, fond_boutons); // Couleur de fond du bouton Menu
     SetBgColor(BSetErreur, fond_boutons); 
@@ -126,8 +127,11 @@ void init_display(int argc, char *argv[], void *d) {
     SetBgColor(BRejouer, fond_boutons); 
     SetBgColor(ZoneSaisie, fond_saisie); // Couleur de fond de la zone de saisie
 
-    ZoneLettres = MakeLabel(" _ _ _ _ _ _"); 
-    XFont font = GetFont("12x24");  // Pour augmenter l'affichage du mot
+    //char *debut = strdup(jeu?mot_en_cours(jeu):"______");
+    //ZoneLettres = MakeLabel(debut);
+    ZoneLettres = MakeLabel("_______");
+    //free(debut);  
+      XFont font = GetFont("12x24");  // Pour augmenter l'affichage du mot
     SetWidgetFont(ZoneLettres, font);
     LabelZone=MakeLabel("Saisir une lettre :");
      SetWidgetFont(LabelZone, font);

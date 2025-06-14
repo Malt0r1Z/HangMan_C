@@ -196,9 +196,8 @@ int validite_lettre(Partie *p,char choix) {
    choix = tolower(choix); //on convertis en minuscule pour pouvoir gerer les lettres saisies
    //La lettre est convertie en minuscule 
    
-    if (choix<'a'||choix>'z') {
-        return 0;
-         //Si la lettre n'est pas dans l'alphabet =>lettre invalide
+    if (!isalpha(choix)) {
+        return 0; //   //Si la lettre n'est pas dans l'alphabet =>lettre invalide 
     }
    //La lettre est dans l'alphabet
     int indice = choix-'a';
@@ -221,14 +220,20 @@ int validite_lettre(Partie *p,char choix) {
         }
     }
     //La lettre n'est pas presente dans le mot
-    if (!valide) p->nb_erreurs++;
-    //Le nombre d'erreurs est incrémenté
-    // On vérifie si c'est la fin de la partie
-    if (terminee(p)) return 2; // Indique que la partie est terminée
+    //On sépare car terminee() prends en compte gagner et perdre 
+      if (!valide) {
+        p->nb_erreurs++;// incrementer le nombre d'erreur 
+        if (p->nb_erreurs >= get_erreur_max()) {//verifier si apres incrémentation on atteint pas la limite
+            valide= 2; // Perdu
+        }
+  }
+    // Vérifier si le mot est complet
+    if (gagnee(p)) {
+        valide =1; // 1 si gagné
+    }
     return valide;
+
 }
-
-
 
 // Gestion des erreurs
 

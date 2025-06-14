@@ -137,9 +137,15 @@ void initGame() {
 
 void rejouer(Widget w, void *d){
     //J'ai ajouté cette ligne, car il faut libérer la mémoire de la partie précédente avant d'en initialiser une nouvelle
-    quitter_partie(jeu); // Libère la mémoire de la partie précédente
+       if (jeu) {
+        //Presence d'une partie 
+        quitter_partie(jeu);
+        jeu = NULL;
+    } // Libère la mémoire de la partie précédente
     clearHangman(); // Efface le dessin du pendu
     initGame(); 
+    AfficherLettres();
+    SetStringEntry(ZoneSaisie, ""); // Efface la saisie
 
     //CloseWindow();
 }
@@ -199,16 +205,22 @@ void aide(Widget w, void *d){
     system("xdg-open 'https://fr.wikipedia.org/wiki/Jeu_du_pendu' &");
 }
 
-
 void saisie(Widget w, char* key , void *d) {
   printf("Nombre d'erreurs maximum : %d\n", get_erreur_max());
   if (terminee(jeu)){
-    //Vider à chaque fois que le joueur tente de saisir 
+   // Vider à chaque fois que le joueur tente de saisir 
     SetStringEntry(ZoneSaisie, ""); 
-    return; 
-  }
-  else if ( key &&   key[0]!= '\0') {
-    char lettre = tolower(key[0]);
+   return; 
+ }
+
+  char lettre = tolower(key[0]);
+//IMPORTANT SI ON RENTRE AUTRE CHOSE QU'UNE LETTRE
+  if (!isalpha(lettre)) {
+        GetOkay("Veuillez saisir une lettre a-z");
+        SetStringEntry(ZoneSaisie, "");
+        return;
+    }
+  else if ( key&&key[0]!= '\0') {
     int valide = validite_lettre(jeu,lettre);  // Met à jour le mot et les erreurs
     if (valide==2) {
       char message[256];
@@ -234,5 +246,22 @@ void saisie(Widget w, char* key , void *d) {
               //==============AJOUTER ICI LA MISE À JOUR DE ZONEDESSIN==============
 
   }
+     // Si la partie est gagnée
+    if (terminee(jeu) && gagnee(jeu)) {
+      char message_gagne[256];
+      snprintf(message_gagne, sizeof(message_gagne),
+         "BRAVO !!!! Vous avez gagné !"
+          "En appuyant sur Okay, vous relancez une partie !\n\n"
+          "Pour changer de langue, clique sur le bouton Menu en haut a gauche.\n\n"
+          "Le mot est : %s\n\n",
+          get_mot_cherche(jeu) );
+        GetOkay(message_gagne);
+      //Vider à chaque fois que le joueur tente de saisir 
+      SetStringEntry(ZoneSaisie, ""); 
+      rejouer(w, d); // Relance une nouvelle partie
+      //Vider à chaque fois que le joueur tente de saisir 
+      //SetStringEntry(ZoneSaisie, ""); 
+      return; 
+    }
 }
   
