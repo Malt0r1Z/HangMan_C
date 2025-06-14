@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma once
+
 typedef struct {
     char *mot_cherche;
     char *mot_affiche;
@@ -26,3 +28,6 @@ extern const char *mot_en_cours(const Partie *);
 extern int ERREUR_MAXIMUM;
 extern void setErreur_max(int );
 extern int get_erreur_max(void);
+extern void setErreur(char *);
+
+extern const char *get_mot_cherche(const Partie *);

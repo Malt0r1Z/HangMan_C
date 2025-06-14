@@ -10,6 +10,8 @@ extern void menu(Widget, void *);
 extern void aide(Widget, void *);
 extern void rejouer(Widget, void *);
 extern void appliquer_erreur_max(Widget, void *);
+extern void bouton_cb(Widget, void *);
 extern void choix_difficulte(Widget, void *);
 void saisie(Widget, char* , void *);
 void initGame();
+

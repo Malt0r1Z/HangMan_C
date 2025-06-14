@@ -20,7 +20,7 @@ char *choix_langue = "francais"; // Pointeur pour stocker le choix de langue,fra
 
 static Widget descriptif;
 
-static Widget erreurs_maximum; //pour configurer le nombre max d'erreurs
+//static Widget erreurs_maximum; //pour configurer le nombre max d'erreurs
 
 /*
    Rôle : Ferme la fenêtre ouverte
@@ -56,10 +56,7 @@ static void setLangue_uk(Widget w, void *d){
 }
 
 
-
 /*
- * Rôle : Recupère la valeur entrée par l'utilisateur pour le nombre maximum d'erreurs
-*/
 void appliquer_erreur_max(Widget w, void *d) {
     const char *valeur = GetStringEntry(erreurs_maximum);
     int erreur_entree= atoi(valeur);
@@ -73,12 +70,25 @@ void appliquer_erreur_max(Widget w, void *d) {
     }
     //CloseWindow();
 }
-// En haut de callbacks.c (hors de toute autre fonction)
-static void bouton_cb(Widget w, void *d) {
+*/
+
+/*
+ * Rôle : Affiche une fenêtre pour configurer le nombre maximum d'erreurs
+*/
+void bouton_cb(Widget w, void *d) {
+  if (erreurs(jeu)>2){
+    GetOkay("Vous ne pouvez plus modifier le nombre d'erreurs maximum, "
+      "car vous avez deja commence une partie.");
+    CloseWindow();
+  }
+  else {
     char *difficulte = (char*)d;
     CloseWindow();
+    setErreur(difficulte);
     printf("Difficulté choisie : %s\n", difficulte);
+  }
 }
+
 
 /*
  * Rôle : Affiche à l'écran une fenêtre pour choisir le niveau de difficulté
@@ -176,7 +186,7 @@ void aide(Widget w, void *d){
     "Si tu fais une erreur, le pendu se dessine petit a petit. "
     "Tu as un nombre maximum d'erreurs, que tu peux configurer dans le menu.\n\n"
     "Pour changer de langue, appuie sur le bouton en haut a gauche et selectionne ta langue favorite !\n\n"
-    "Si tu veux en savoir plus sur le jeu, n'hesite pas a te rendre sur la page Wikipedia associee. \n"
+    "Si tu veux en savoir plus sur le jeu, n'hesite pas a te rendre sur la page Wikipedia ouverte dans ton navigateur. \n"
     "Bonne chance !\n\n"
     );
     //MakeWindow("Aide", SAME_DISPLAY, EXCLUSIVE_WINDOW);
@@ -186,24 +196,43 @@ void aide(Widget w, void *d){
     //SetWidgetPos(BOK, PLACE_UNDER, explication, NO_CARE, NULL); // Bouton OK sous les explications
     //ShowDisplay();
     //MainLoop();
+    system("xdg-open 'https://fr.wikipedia.org/wiki/Jeu_du_pendu' &");
 }
 
 
 void saisie(Widget w, char* key , void *d) {
+  printf("Nombre d'erreurs maximum : %d\n", get_erreur_max());
   if (terminee(jeu)){
-      //Vider à chaque fois que le joueur tente de saisir 
-        SetStringEntry(ZoneSaisie, ""); 
-        return;
-   }
+    //Vider à chaque fois que le joueur tente de saisir 
+    SetStringEntry(ZoneSaisie, ""); 
+    return; 
+  }
   else if ( key &&   key[0]!= '\0') {
-      char lettre = tolower(key[0]);
-      validite_lettre(jeu,lettre);  // Met à jour le mot et les erreurs
-      AfficherLettres();  
-      SetStringEntry(ZoneSaisie, ""); // Vide la zone de saisie après chaque lettre
-      // Mettre à jour la zone de dessin après chaque saisie
-      updateDrawHangman(erreurs(jeu));
+    char lettre = tolower(key[0]);
+    int valide = validite_lettre(jeu,lettre);  // Met à jour le mot et les erreurs
+    if (valide==2) {
+      char message[256];
+      snprintf(message, sizeof(message),
+          "PERDU!!!\n\n"
+          "En appuyant sur Okay, vous relancez une partie !\n\n"
+          "Pour changer de langue, clique sur le bouton Menu en haut a gauche.\n\n"
+          "Le mot est : %s\n\n",
+          get_mot_cherche(jeu)
+      );
+      GetOkay(message);
+      //Vider à chaque fois que le joueur tente de saisir 
+      SetStringEntry(ZoneSaisie, ""); 
+      rejouer(w, d); // Relance une nouvelle partie
+      //Vider à chaque fois que le joueur tente de saisir 
+      //SetStringEntry(ZoneSaisie, ""); 
+      return; 
+    }
+    AfficherLettres();  
+    SetStringEntry(ZoneSaisie, ""); // Vide la zone de saisie après chaque lettre
+    // Mettre à jour la zone de dessin après chaque saisie
+    updateDrawHangman(erreurs(jeu));
               //==============AJOUTER ICI LA MISE À JOUR DE ZONEDESSIN==============
 
-        }
-    }
+  }
+}
   

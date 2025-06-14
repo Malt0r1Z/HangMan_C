@@ -2,18 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
 #include "data.h"
 #include "readFile.h"
 #include "liste.h"
 
 
-int ERREUR_MAXIMUM = 6; // Nombre maximum d'erreurs autorisées
-/*
-*Initialise une nouvelle partie du jeu
-Elle charge un dictionnaire et,tire un mot aléatoirement et initialise les variables de la partie
-* Antécédent : le dictionnaire doit exister et contenir des mots valides
-*/
+int ERREUR_MAXIMUM = 8; // Nombre maximum d'erreurs autorisées. Par défaut, 8 erreurs sont autorisées.
 
+
+
+/*
+ * Rôle : Initialise une partie en utilisant le dictionnaire spécifié
+ *        Antécédent : le dictionnaire doit exister et contenir des mots valides
+*/
 Partie *init_Partie(char *dictionnaire) {
     printf("J'init_Partie\n");
     Partie *p = malloc(sizeof(Partie));
@@ -67,7 +69,8 @@ Partie* init_Partie_ang(void) {
 
 
 /*
- Rôle :
+ Rôle : Renvoie le nombre d'erreurs commises par le joueur
+ Antécédent : la partie doit être initialisée
  */
 int erreurs(const Partie *p) {
     return p->nb_erreurs;
@@ -112,7 +115,7 @@ int fin_partie(Partie *p) {
 
 
 /*
- Rôle :Libère la mémoire allouée pour la partie et affiche un message de fin
+ * Rôle : Libère la mémoire allouée pour la partie
  */
 void quitter_partie(Partie *p) {
     // Libération de la mémoire utilisée pour la partie
@@ -129,9 +132,10 @@ void quitter_partie(Partie *p) {
 
 
 /*
- Rôle :Affiche les lettres déjà proposées par le joueur
- */
- void lettre_utilisee(const Partie *p, char *lettres_impossibles){
+ * Rôle : Affiche les lettres déjà proposées par le joueur
+ * Antécédent : la partie doit être initialisée
+*/
+void lettre_utilisee(const Partie *p, char *lettres_impossibles){
     int k=0;
     for (int i=0;i<26;i++) {
         
@@ -141,17 +145,17 @@ void quitter_partie(Partie *p) {
         }
     }
     lettres_impossibles[k] = '\0'; // Terminer la chaîne de caractères
- }
+}
 
 
 
 
- /*
-*Role :Renvoie vrai si la partie est terminée, faux sinon
-* Antécédent : la partie doit être initialisée
+/*
+ * Rôle : Renvoie vrai si la partie est terminée, faux sinon
+ * Antécédent : la partie doit être initialisée
 */
 int terminee(Partie *p) {
-    //La partie est terminée si le mot a été trouvé ou si le nombre d'erreurs= ERREUR_MAXIMUM 
+    // La partie est terminée si le mot a été trouvé ou si le nombre d'erreurs= ERREUR_MAXIMUM 
     return gagnee(p)||(p->nb_erreurs >= get_erreur_max());
 }
 
@@ -160,8 +164,8 @@ int terminee(Partie *p) {
 
 
 /*
-*Role :Renvoie vraie si le mot a été trouvé, faux sinon
-* Antécédent : la partie doit être initialisée
+ * Rôle : Renvoie vraie si le mot a été trouvé, faux sinon
+ * Antécédent : la partie doit être initialisée
 */
 int gagnee(Partie *p) {
     return strcmp(p->mot_cherche,p->mot_affiche) == 0;
@@ -172,7 +176,7 @@ int gagnee(Partie *p) {
 
 /*
  * Rôle : Affiche le mota trouver en remplacant les lettresnon trouvées par des 'x'
- *       Antécédent : la partie doit être initialisée
+ * Antécédent : la partie doit être initialisée
  */
 const char *mot_en_cours(const Partie *p) {
      //printf("Affichage en cours : %s\n", p->mot_affiche); // DEBUG
@@ -184,7 +188,9 @@ const char *mot_en_cours(const Partie *p) {
 
 
 /*
-*Role : Verifie si la lettre choisie est valide ou pas en l'ajoutant si oui au tableau des lettres deja utilisés
+ * Rôle : Verifie si la lettre choisie est valide ou pas en l'ajoutant si oui au tableau des lettres deja utilisés
+ * Antécédent : la partie doit être initialisée
+ *            : la lettre choisie doit être une lettre de l'alphabet
 */
 int validite_lettre(Partie *p,char choix) {
    choix = tolower(choix); //on convertis en minuscule pour pouvoir gerer les lettres saisies
@@ -217,22 +223,51 @@ int validite_lettre(Partie *p,char choix) {
     //La lettre n'est pas presente dans le mot
     if (!valide) p->nb_erreurs++;
     //Le nombre d'erreurs est incrémenté
+    // On vérifie si c'est la fin de la partie
+    if (terminee(p)) return 2; // Indique que la partie est terminée
     return valide;
 }
 
-//gestion des erreurs
-/*
-* Rôle : Définit le nombre maximum d'erreurs autorisées
- *        Antécédent : valeur doit être un entier positif
- */
 
+
+// Gestion des erreurs
+
+
+/*
+ * Rôle : Définit le nombre maximum d'erreurs autorisées
+    * Antécédent : valeur doit être un entier positif 6<=valeur<=8
+*/
 void setErreur_max(int valeur) {
-    if (valeur>=1 && valeur<= 6)  ERREUR_MAXIMUM = valeur;
+    ERREUR_MAXIMUM = valeur;
 }
 
 /*
-*Role : Renvoie le nombre maximum d'erreurs autorisées
+ * Rôle : Renvoie le nombre maximum d'erreurs autorisées
 */
 int get_erreur_max(void) {
     return ERREUR_MAXIMUM;
+}
+
+/*
+ * Rôle : Définit le nombre maximum d'erreurs en fonction de la difficulté choisie
+ *        Antécédent : difficulte doit être une chaîne de caractères valide
+ */
+void setErreur(char *difficulte) {
+    if (strcmp(difficulte, "Facile") == 0) {
+        setErreur_max(8);
+    } else if (strcmp(difficulte, "Moyen") == 0) {
+        setErreur_max(7);
+    } else if (strcmp(difficulte, "Difficile") == 0) {
+        setErreur_max(6);
+    } else {
+        fprintf(stderr, "Difficulté inconnue : %s\n", difficulte);
+    }
+}
+
+/*
+ * Rôle : renvoie le mot à trouver
+ * Antécédent : la partie doit être initialisée
+*/
+const char *get_mot_cherche(const Partie *p) {
+    return p->mot_cherche;
 }
