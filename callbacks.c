@@ -235,6 +235,7 @@ void saisie(Widget w, char* key , void *d) {
           "PERDU!!!\n\n"
           "En appuyant sur Okay, vous relancez une partie !\n\n"
           "Pour changer de langue, clique sur le bouton Menu en haut a gauche.\n\n"
+          "Pour quitter le jeu, cliquez sur la croix en haut à droite.\n\n"
           "Le mot est : %s\n\n",
           get_mot_cherche(jeu)
       );
@@ -260,6 +261,7 @@ void saisie(Widget w, char* key , void *d) {
           "BRAVO !!!! Vous avez gagne ! "
           "En appuyant sur Okay, vous relancez une partie !\n\n"
           "Pour changer de langue, clique sur le bouton Menu en haut a gauche.\n\n"
+          "Pour quitter le jeu, cliquez sur la croix en haut à droite.\n\n"
           "Le mot est : %s\n\n",
           get_mot_cherche(jeu) );
         GetOkay(message_gagne);
