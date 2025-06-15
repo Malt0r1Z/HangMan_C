@@ -13,7 +13,7 @@
 #include "vue.h"
 
 
-Partie *jeu=NULL; // Pointeur vers la partie en cours
+Partie *jeu = NULL; // Pointeur vers la partie en cours, initialisé à NULL
 
 char *choix_langue = "francais"; // Pointeur pour stocker le choix de langue,francais par defaut 
 
@@ -122,11 +122,18 @@ void choix_difficulte(Widget w, void *d) {
 Rôle : Initialiser le jeu en fonction du dictionnaire choisi
 */
 void initGame() {
+    // Libérer l'ancienne partie si elle existe
+    if (jeu) {
+        quitter_partie(jeu);
+        jeu = NULL;
+    }
+    
+    // Initialiser une nouvelle partie
     if (strcmp(choix_langue,"francais") == 0) {
-        jeu=init_Partie_fr();
+        jeu = init_Partie_fr();
     }
     else {
-        jeu=init_Partie_ang();
+        jeu = init_Partie_ang();
     }
 }
 
@@ -250,7 +257,7 @@ void saisie(Widget w, char* key , void *d) {
     if (terminee(jeu) && gagnee(jeu)) {
       char message_gagne[256];
       snprintf(message_gagne, sizeof(message_gagne),
-         "BRAVO !!!! Vous avez gagné !"
+          "BRAVO !!!! Vous avez gagne ! "
           "En appuyant sur Okay, vous relancez une partie !\n\n"
           "Pour changer de langue, clique sur le bouton Menu en haut a gauche.\n\n"
           "Le mot est : %s\n\n",
