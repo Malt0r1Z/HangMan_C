@@ -122,13 +122,13 @@ void choix_difficulte(Widget w, void *d) {
 Rôle : Initialiser le jeu en fonction du dictionnaire choisi
 */
 void initGame() {
-    // Libérer l'ancienne partie si elle existe
+    // Libération de l'ancienne partie si elle existe
     if (jeu) {
         quitter_partie(jeu);
         jeu = NULL;
     }
     
-    // Initialiser une nouvelle partie
+    // Initialisation d'une nouvelle partie
     if (strcmp(choix_langue,"francais") == 0) {
         jeu = init_Partie_fr();
     }
@@ -235,7 +235,7 @@ void saisie(Widget w, char* key , void *d) {
           "PERDU!!!\n\n"
           "En appuyant sur Okay, vous relancez une partie !\n\n"
           "Pour changer de langue, clique sur le bouton Menu en haut a gauche.\n\n"
-          "Pour quitter le jeu, cliquez sur la croix en haut à droite.\n\n"
+          "Pour quitter le jeu, cliquez sur la croix en haut a droite.\n\n"
           "Le mot est : %s\n\n",
           get_mot_cherche(jeu)
       );
@@ -261,7 +261,7 @@ void saisie(Widget w, char* key , void *d) {
           "BRAVO !!!! Vous avez gagne ! "
           "En appuyant sur Okay, vous relancez une partie !\n\n"
           "Pour changer de langue, clique sur le bouton Menu en haut a gauche.\n\n"
-          "Pour quitter le jeu, cliquez sur la croix en haut à droite.\n\n"
+          "Pour quitter le jeu, cliquez sur la croix en haut a droite.\n\n"
           "Le mot est : %s\n\n",
           get_mot_cherche(jeu) );
         GetOkay(message_gagne);

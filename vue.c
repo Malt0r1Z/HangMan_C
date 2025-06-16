@@ -3,6 +3,7 @@
 // 
 // Khady DIOP & Alex MEURILLON ELSE3
 //
+// Ce fichier implémente la vue du jeu de pendu
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,10 +12,11 @@
 #include "callbacks.h"
 #include "vue.h"
 
-#define LARGEUR_FENETRE 600
-#define HAUTEUR_FENETRE 400
-#define TAILLE_ZONE_LETTRES 300
 
+// Définitions d'une constante pour la taille de la fenêtre
+#define LARGEUR_FENETRE 600
+
+// Déclaration de la variable globale pour la partie en cours et des widgets
 extern Partie *jeu;
 Widget ZoneDessin;
 Widget ZoneSaisie;
@@ -22,9 +24,9 @@ Widget ZoneLettres;
 
 
 /*
- * Rôle : Callback pour dessiner le pendu 
+ * Rôle : Callback pour dessiner le support du pendu
 */
-void DrawHangmanBase(Widget w, int width, int height, void *data) {
+static void DrawHangmanBase(Widget w, int width, int height, void *data) {
     // Support du pendu (à gauche)
     int base_x = width/4;
     int base_y = height/6;
@@ -45,12 +47,12 @@ void DrawHangmanBase(Widget w, int width, int height, void *data) {
 
 /*
  * Rôle : Fonction pour dessiner le pendu en fonction du nombre d'erreurs
+ * Antécédent : La zone de dessin doit être créée et affichée
 */
-
 void updateDrawHangman(int erreurs) {
     int erreur = erreurs;
-    int width = LARGEUR_FENETRE;
-    int height = 200; 
+    int width, height;
+    getDrawAreaSize(&width, &height); // Récupère la taille de la zone de dessin pour rendre le dessin responsive
 
     if (erreur >=1) DrawArc(width/2 - 15, height/3, 30, 30, 0, 360); // Tête du pendu sous forme de cercle 
     if (erreur >=2) DrawLine(width/2, height/3 + 30, width/2, height/3 + 100); // Corps
@@ -69,28 +71,37 @@ void updateDrawHangman(int erreurs) {
 void clearHangman(void) {
     ClearDrawArea(); // Efface la zone de dessin
     // Redessine la base du pendu
-    DrawHangmanBase(ZoneDessin, LARGEUR_FENETRE, 200, NULL);
+    int width, height;
+    getDrawAreaSize(&width, &height); // Récupère la taille de la zone de dessin pour rendre le dessin responsive
+    DrawHangmanBase(ZoneDessin, width, height, NULL);
 }
 
-// Fonction pour afficher les lettres à deviner 
+
+/*
+ * Rôle : Callback pour gérer l'affichage des lettres saisies
+ * Antécédent : La zone de lettres doit être créée et affichée
+*/
 void AfficherLettres(void) {
     if (jeu && ZoneLettres) {
         const char *etat = mot_en_cours(jeu);
         SetLabel(ZoneLettres, (char *)etat);
     }
 }
-// Rôle: création et assemblage des widgets 
+
+/*
+ * Rôle : Initialise l'affichage du jeu
+ * Conséquent : Crée les widgets, les boutons et les zones de saisie
+*/
 void init_display(int argc, char *argv[], void *d) {
     initGame(); // Initialisation d'une seule partie au démarrage
 
     Widget
-       // ZoneDessin, // Zone pour dessiner le pendu
-       // ZoneLettres,// Zone pour afficher les lettres à deviner
-        BMenu,      // le bouton Menu pour accéder au menu
-        BSetErreur, // le bouton pour configurer le nombre d'erreurs
-        BAide,      // le bouton Aide pour afficher l'aide
-        BRejouer,   // le bouton Rejouer pour recommencer une partie
-        LabelZone;
+        BMenu,      // Bouton Menu pour accéder au menu
+        BSetErreur, // Bouton pour configurer le nombre d'erreurs
+        BAide,      // Bouton Aide pour afficher l'aide
+        BRejouer,   // Bouton Rejouer pour recommencer une partie
+        LabelZone;  // Label pour indiquer la zone de saisie des lettres
+
     // Création des boutons
     BMenu = MakeButton("Menu", menu, d);
     BSetErreur = MakeButton("Niveau de difficulte", choix_difficulte, d);
@@ -101,7 +112,7 @@ void init_display(int argc, char *argv[], void *d) {
     // Nous utilisons des Widgets Espace afin de placer les widgets à notre guise
     Widget Espace_haut = MakeButton("                                            ", NULL, NULL); // Espaces
     Widget Espace_bas = MakeButton("                      ", NULL, NULL); // Espaces
-    // Ligne du haut : Menu à gauche, Aide à droite, Rejouer à droite de Aide
+    // Ligne du haut : Menu à gauche suivi du menu de difficulté. Aide à droite et bouton Rejouer après l'Aide
     SetWidgetPos(BMenu,  NO_CARE, NULL, NO_CARE, NULL);
     SetWidgetPos(BSetErreur, PLACE_RIGHT, BMenu, NO_CARE, NULL);
     SetWidgetPos(Espace_haut, PLACE_RIGHT, BSetErreur, NO_CARE, NULL);
@@ -117,26 +128,30 @@ void init_display(int argc, char *argv[], void *d) {
     ZoneSaisie=MakeStringEntry(NULL, 100, saisie, d);
   
 
-    // Couleurs
-
-    int fond_saisie = GetRGBColor(220, 200, 220);  // 
-    int fond_boutons = GetRGBColor(153, 204, 255); // Fond bleu clair pour le dessin
+    // Couleurs et affichage des boutons
+    int fond_saisie = GetRGBColor(220, 200, 220);  // Fond violet clair 
+    int fond_boutons = GetRGBColor(153, 204, 255); // Fond bleu clair 
     SetBgColor(BMenu, fond_boutons); // Couleur de fond du bouton Menu
-    SetBgColor(BSetErreur, fond_boutons); 
-    SetBgColor(BAide, fond_boutons); 
-    SetBgColor(BRejouer, fond_boutons); 
+    SetBgColor(BSetErreur, fond_boutons); // Couleur de fond du choix de difficulté
+    SetBgColor(BAide, fond_boutons); // Couleur de fond du bouton Aide
+    SetBgColor(BRejouer, fond_boutons); // Couleur de fond du bouton Rejouer
     SetBgColor(ZoneSaisie, fond_saisie); // Couleur de fond de la zone de saisie
 
+    // Zone de lettres pour afficher le mot en cours
+    // Initalisation de la zone de lettres avec le mot en cours ou des tirets si pas de mot
     char *debut = strdup(jeu?mot_en_cours(jeu):"______");
     ZoneLettres = MakeLabel(debut);
-    //ZoneLettres = MakeLabel("_______");
     free(debut);  
-      XFont font = GetFont("12x24");  // Pour augmenter l'affichage du mot
+
+    // Taille de la police pour la zone de lettres et le label
+    XFont font = GetFont("12x24");  // Augmente la taille d'affichage du mot
     SetWidgetFont(ZoneLettres, font);
     LabelZone=MakeLabel("Saisir une lettre :");
-     SetWidgetFont(LabelZone, font);
+    SetWidgetFont(LabelZone, font);
+
+
     // Zone des lettres sous la zone de dessin, centrée horizontalement
-    SetWidgetPos(LabelZone,PLACE_UNDER,ZoneLettres,NO_CARE,NULL);
+    SetWidgetPos(LabelZone, PLACE_UNDER, ZoneLettres, NO_CARE, NULL);
     SetWidgetPos(ZoneSaisie, PLACE_UNDER, ZoneLettres, PLACE_RIGHT, LabelZone);
     SetWidgetPos(Espace_bas, NO_CARE, NULL, PLACE_UNDER, ZoneDessin);
     SetWidgetPos(ZoneLettres, PLACE_RIGHT, Espace_bas, PLACE_UNDER, ZoneDessin);
