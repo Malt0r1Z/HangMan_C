@@ -3,7 +3,7 @@
 // 
 // Ndeye Khady DIOP & Alex MEURILLON ELSE3
 //
-// Ce fichier implémente la gestion des données  du jeu de pendu
+// Ce fichier implémente la gestion des données du jeu de pendu
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include "readFile.h"
 #include "liste.h"
 
-int ERREUR_MAXIMUM = 8; // costante maximum d'erreurs autorisées. Par défaut, 8 erreurs sont autorisées.
+static int ERREUR_MAXIMUM = 8; // Constante maximum d'erreurs autorisées. Par défaut, 8 erreurs sont autorisées.
 
 /*
  * Rôle : Initialise une nouvelle partie en utilisant le dictionnaire spécifié en paramètres 
@@ -25,22 +25,22 @@ Partie *init_Partie(char *dictionnaire) {
     printf("J'init_Partie\n");
     Partie *p = malloc(sizeof(Partie));
     if (!p) return NULL;
-    //Récuperation du mot et sélection d'un mot aléatoire
+    // Récuperation du mot et sélection d'un mot aléatoire
     Liste dico = getDico(dictionnaire);
     char *mot = randomMot(dico); 
-    //mot est tiré au hasard du dictionnaire 
+    // mot est tiré au hasard du dictionnaire 
 
     if(!mot) {
-        //Aucun mot n'a été selectionné
+        // Aucun mot n'a été selectionné
         free(p);
         return NULL;
     }
-    //Un mot est bien selectionné dans le dictionnaire 
+    // Un mot est bien selectionné dans le dictionnaire 
     int longueur_mot= strlen(mot);
-    //longueur_mot est la longueur du mot tiré
+    // longueur_mot est la longueur du mot tiré
 
 
-    //Allocation dynamique et initialisation  du mot à trouver par l'utilisateur 
+    // Allocation dynamique et initialisation du mot à trouver par l'utilisateur 
     p->mot_cherche=malloc(longueur_mot+1);
     strcpy(p->mot_cherche, mot);
     p->mot_affiche = malloc(longueur_mot + 1);
@@ -50,18 +50,18 @@ Partie *init_Partie(char *dictionnaire) {
     for(int i=1;i<=longueur_mot ;i++) p->mot_affiche[i-1] = '_';
     p->mot_affiche[longueur_mot] = '\0'; 
     for (int i = 0; i < 26; i++) {
-    //le tableau des lettres deja utilisées intialisé à zéro, car début du jeu  
+    // Le tableau des lettres deja utilisées intialisé à zéro, car début du jeu  
         p->alphabet[i] = 0;
     }
 
     p->nb_erreurs = 0;
-    //le nombre d'erreurs est initialisé à zéro 
+    // Le nombre d'erreurs est initialisé à zéro 
 
     p->nblettres_trouve = 0;
-    //le nombre de lettres trouvées est initialisé à zéro
+    // Le nombre de lettres trouvées est initialisé à zéro
 
     return p;
-    //pointeur vers la partie initialisée 
+    // Pointeur vers la partie initialisée 
 }
 
 /*
@@ -81,8 +81,8 @@ Partie* init_Partie_ang(void) {
 }
 
 /*
- Rôle : Renvoie le nombre d'erreurs commises par le joueur
- Antécédent : la partie doit être initialisée
+ * Rôle : Renvoie le nombre d'erreurs commises par le joueur
+ * Antécédent : la partie doit être initialisée
  */
 int erreurs(const Partie *p) {
     return p->nb_erreurs;

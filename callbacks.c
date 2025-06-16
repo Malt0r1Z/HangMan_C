@@ -37,7 +37,6 @@ static void setLangue_fr(Widget w, void *d){
     choix_langue = "francais";
     GetOkay("Dictionnaire selectionnee : francais");
     rejouer(NULL, NULL);
-
 }
 
 
@@ -49,7 +48,6 @@ static void setLangue_uk(Widget w, void *d){
   choix_langue = "Anglais";
   GetOkay("Dictionnaire selectionnee : anglais");
   rejouer(NULL, NULL);
-
 }
 
 /*
@@ -95,7 +93,7 @@ void choix_difficulte(Widget w, void *d) {
 
 
 /*
-Rôle : Initialiser le jeu en fonction du dictionnaire choisi
+Rôle : Initialisation du jeu en fonction du dictionnaire choisi
 */
 void initGame() {
     // Libération de l'ancienne partie si elle existe
@@ -122,7 +120,6 @@ void initGame() {
 /*
  * Rôle : Réinitialise le jeu pour une nouvelle partie 
 */
-
 void rejouer(Widget w, void *d){
     if (jeu) {
         //Presence d'une partie 
@@ -130,13 +127,13 @@ void rejouer(Widget w, void *d){
         jeu = NULL;
     } // Libère la mémoire de la partie précédente avant d'en allouer à une nouvelle
     clearHangman(); // Efface le dessin du pendu
-    initGame(); //une nouvelle partie est initialisée
-    AfficherLettres(); //mis à jour de l'affichage 
+    initGame(); // Nouvelle partie est initialisée
+    AfficherLettres(); // Mise à jour de l'affichage 
     SetStringEntry(ZoneSaisie, ""); // Efface la saisie
 }
 
 /*
- * Rôle :Affiche une fenêtre pour le choix des langues(menu) avec 
+ * Rôle : Affiche une fenêtre pour le choix des langues(menu) avec :
  *     * Un label descriptif
  *     * Boutons Français, Bouton Anglais et Bouton Annuler
 */
@@ -185,6 +182,8 @@ void aide(Widget w, void *d){
     );
     system("xdg-open 'https://fr.wikipedia.org/wiki/Jeu_du_pendu' &");
 }
+
+
 /*
  * Rôle : Gère la saisie d'une lettre par le joueur lors de la partie 
  *        Si la partie est terminée => ignore la saisie
@@ -195,30 +194,29 @@ void aide(Widget w, void *d){
 void saisie(Widget w, char* key , void *d) {
   printf("Nombre d'erreurs maximum : %d\n", get_erreur_max());
   if (terminee(jeu)){
-    //La partie est terminée
+    // La partie est terminée
     SetStringEntry(ZoneSaisie, ""); 
-    //la saisie n'est pas prise en compte
+    // La saisie n'est pas prise en compte
    return; 
   }
-  //La partie n'est pas terminée
+  // La partie n'est pas terminée
 
-  //Convertir la lettre en minuscule
+  // Convertie la lettre en minuscule
   char lettre = tolower(key[0]);
   
   if (!isalpha(lettre)) {
-    //Le boutton préssé sur le clavier n'est pas une lettre 
+    // Le boutton préssé sur le clavier n'est pas une lettre 
         GetOkay("Veuillez saisir une lettre a-z");
-        //Message à l'utilisateur 
+        // Message à l'utilisateur 
         SetStringEntry(ZoneSaisie, "");
-        //la saisie n'est pas prise en compte
+        // La saisie n'est pas prise en compte
         return;
-    }
-  //L'utilisateur a saisi une lettre alphabétique
+  }
+  // L'utilisateur a saisi une lettre alphabétique
   else if ( key&&key[0]!= '\0') {
-    //
     int valide = validite_lettre(jeu,lettre);  // Met à jour le mot et les erreurs
     if (valide==2) {
-      //La partie est terminée, le nombre d'erreurs maximum est atteint
+      // La partie est terminée, le nombre d'erreurs maximum est atteint
       char message[256];
       snprintf(message, sizeof(message),
           "PERDU!!!\n\n"
@@ -229,39 +227,39 @@ void saisie(Widget w, char* key , void *d) {
           get_mot_cherche(jeu)
       );
       GetOkay(message);
-      //Message de fin de partie et possibilité de rejouer via le bouton OKAY
+      // Message de fin de partie et possibilité de rejouer via le bouton OKAY
       SetStringEntry(ZoneSaisie, "");
-       //la saisie n'est plus  prise en compte => fin de la partie 
+       // La saisie n'est plus  prise en compte => fin de la partie 
       rejouer(w, d); // Relance une nouvelle partie
       return; 
     }
 
-    AfficherLettres(); //mettre à jour l'affichage du mot 
+    AfficherLettres(); // Mettre à jour l'affichage du mot 
     SetStringEntry(ZoneSaisie, ""); // Vide la zone de saisie après chaque lettre
     // Mettre à jour la zone de dessin après chaque saisie
     updateDrawHangman(erreurs(jeu));
 
   }
-   //la partie n'est pas perdue
+   // La partie n'est pas perdue
    
-    if (terminee(jeu) && gagnee(jeu)) {
-      //la partie est terminée et l'utilisateur à gagnée la partie 
-      char message_gagne[256];
-      snprintf(message_gagne, sizeof(message_gagne),
-          "BRAVO !!!! Vous avez gagné la partie  ! "
-          "En appuyant sur Okay, vous relancez une partie !\n\n"
-          "Pour changer de langue, cliquez sur le bouton Menu en haut a gauche.\n\n"
-          "Pour quitter le jeu, cliquez sur la croix en haut a droite.\n\n"
-          "Le mot est : %s\n\n",
-          get_mot_cherche(jeu) );
-        GetOkay(message_gagne);
-        //Message de fin de partie et possibilité de rejouer via le bouton OKAY
+  if (terminee(jeu) && gagnee(jeu)) {
+    //la partie est terminée et l'utilisateur à gagnée la partie 
+    char message_gagne[256];
+    snprintf(message_gagne, sizeof(message_gagne),
+        "BRAVO !!!! Vous avez gagné la partie  ! "
+        "En appuyant sur Okay, vous relancez une partie !\n\n"
+        "Pour changer de langue, cliquez sur le bouton Menu en haut a gauche.\n\n"
+        "Pour quitter le jeu, cliquez sur la croix en haut a droite.\n\n"
+        "Le mot est : %s\n\n",
+        get_mot_cherche(jeu) );
+      GetOkay(message_gagne);
+      //Message de fin de partie et possibilité de rejouer via le bouton OKAY
 
-      SetStringEntry(ZoneSaisie, ""); 
-      //la saisie n'est plus prise en compte=>fin de la partie 
+    SetStringEntry(ZoneSaisie, ""); 
+    //la saisie n'est plus prise en compte=>fin de la partie 
 
-      rejouer(w, d); // Relance une nouvelle partie
-      return; 
-    }
+    rejouer(w, d); // Relance une nouvelle partie
+    return; 
+  }
 }
   
