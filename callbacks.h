@@ -1,5 +1,6 @@
 /*
- * callbacks.h
+ * callbacks.h contient les prototypes de toutes les fonctions de rappels.
+
  *
  *  Ndeye khady DIOP & Alex MEURILLON ELSE3
 */

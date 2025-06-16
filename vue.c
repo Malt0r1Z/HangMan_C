@@ -52,7 +52,7 @@ static void DrawHangmanBase(Widget w, int width, int height, void *data) {
 void updateDrawHangman(int erreurs) {
     int erreur = erreurs;
     int width, height;
-    getDrawAreaSize(&width, &height); // Récupère la taille de la zone de dessin pour rendre le dessin responsive
+    GetDrawAreaSize(&width, &height); // Récupère la taille de la zone de dessin pour rendre le dessin responsive
 
     if (erreur >=1) DrawArc(width/2 - 15, height/3, 30, 30, 0, 360); // Tête du pendu sous forme de cercle 
     if (erreur >=2) DrawLine(width/2, height/3 + 30, width/2, height/3 + 100); // Corps
@@ -72,7 +72,7 @@ void clearHangman(void) {
     ClearDrawArea(); // Efface la zone de dessin
     // Redessine la base du pendu
     int width, height;
-    getDrawAreaSize(&width, &height); // Récupère la taille de la zone de dessin pour rendre le dessin responsive
+    GetDrawAreaSize(&width, &height); // Récupère la taille de la zone de dessin pour rendre le dessin responsive
     DrawHangmanBase(ZoneDessin, width, height, NULL);
 }
 

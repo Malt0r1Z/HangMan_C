@@ -1,6 +1,7 @@
 /*
- * callbacks.c
+ * Ce fichier callbacks.c contient toutes les fonctions de rappel 
  *
+ * 
  * Ndeye khady DIOP & Alex MEURILLON ELSE3
 */
 
@@ -12,76 +13,57 @@
 #include "data.h"
 #include "vue.h"
 
+// Pointeur vers la partie en cours, initialisé à NULL
+Partie *jeu = NULL; 
 
-Partie *jeu = NULL; // Pointeur vers la partie en cours, initialisé à NULL
+// Pointeur pour stocker le choix de langue,français par defaut 
+char *choix_langue = "francais"; 
 
-char *choix_langue = "francais"; // Pointeur pour stocker le choix de langue,francais par defaut 
-
-
+//Widget static pour les descriptions
 static Widget descriptif;
 
-//static Widget erreurs_maximum; //pour configurer le nombre max d'erreurs
-
 /*
-   Rôle : Ferme la fenêtre ouverte
+ *  Rôle : Ferme la fenêtre courante 
 */
 static void annuler(Widget w, void *d){
   CloseWindow();
 }
+
 /*
-  Rôle : Choix du dictionnaire français
-  Affiche un message de confirmation et relance le jeu avec la langue sélectionnée
+ * Rôle : Configure une partie avec le dictionnaire français et lance la partie
+ *      Affiche un message de confirmation et relance le jeu avec la langue sélectionnée
 */
 static void setLangue_fr(Widget w, void *d){
     choix_langue = "francais";
     GetOkay("Dictionnaire selectionnee : francais");
-    //ShowMessage("Dictionnaire sélectionnée:français");
     rejouer(NULL, NULL);
-  // Logique pour changer la langue en français
-  //CloseWindow();
+
 }
 
 
 /*
-  Rôle : Choix du dictionnaire anglais
-  Affiche un message de confirmation et relance le jeu avec la langue sélectionnée
+ * Rôle : Configure une partie avec  le dictionnaire  anglais  et lance la partie
+ *      Affiche un message de confirmation et relance le jeu avec la langue sélectionnée
 */
 static void setLangue_uk(Widget w, void *d){
   choix_langue = "Anglais";
   GetOkay("Dictionnaire selectionnee : anglais");
-  //ShowMessage("dictionary selected:English ");
   rejouer(NULL, NULL);
-  // Logique pour changer la langue en anglais
-  //CloseWindow();
+
 }
 
-
 /*
-void appliquer_erreur_max(Widget w, void *d) {
-    const char *valeur = GetStringEntry(erreurs_maximum);
-    int erreur_entree= atoi(valeur);
-    if (erreur_entree >=1&& erreur_entree<= 6) {
-        setErreur_max(erreur_entree);
-        GetOkay("Nombre d'erreurs maximum applique");
-        //ShowMessage("Nombre d'erreurs maximum appliqué");
-    } else {
-        GetOkay("L'erreur maximum doit etre un nombre entre 1 et 6");
-        // ShowMessage("L'erreur maximum doit être un nombre entre 1 et 6");
-    }
-    //CloseWindow();
-}
-*/
-
-/*
- * Rôle : Affiche une fenêtre pour configurer le nombre maximum d'erreurs
+ * Rôle : Callback pour configurer la difficulté
 */
 void bouton_cb(Widget w, void *d) {
   if (erreurs(jeu)>2){
+    //le nombre d'erreurs doit etre inférieur ou égale à 2 pour modifier la difficulté
     GetOkay("Vous ne pouvez plus modifier le nombre d'erreurs maximum, "
       "car vous avez deja commence une partie.");
     CloseWindow();
   }
   else {
+    //configurer la difficulté 
     char *difficulte = (char*)d;
     CloseWindow();
     setErreur(difficulte);
@@ -92,16 +74,10 @@ void bouton_cb(Widget w, void *d) {
 
 /*
  * Rôle : Affiche à l'écran une fenêtre pour choisir le niveau de difficulté
+ *        Crée une fenêtre avec 3 boutons (Facile/Moyen/Difficile)
+ *        Chaque bouton déclenche bouton_cb() avec la difficulté correspondante
 */
 void choix_difficulte(Widget w, void *d) {
-   //char *difficulte = NULL;
-
-    // Callback interne pour chaque bouton
- //   void bouton_cb(Widget w, void *d) {
-        //difficulte = (char*)d;
-      //  CloseWindow();
-        //printf("Difficulté choisie : %s\n", difficulte);
-   // }
 
     MakeWindow("Choix de la difficulté", SAME_DISPLAY, EXCLUSIVE_WINDOW);
     Widget bFacile = MakeButton("Facile", bouton_cb, "Facile");
@@ -124,72 +100,77 @@ Rôle : Initialiser le jeu en fonction du dictionnaire choisi
 void initGame() {
     // Libération de l'ancienne partie si elle existe
     if (jeu) {
+      //Une partie existe déjà 
         quitter_partie(jeu);
+        //La partie existante est libérée 
         jeu = NULL;
     }
     
-    // Initialisation d'une nouvelle partie
+    // Initialisation d'une nouvelle partie avec le bon dictionnaire 
     if (strcmp(choix_langue,"francais") == 0) {
         jeu = init_Partie_fr();
+        //Une partie avec le dictionnaire français est initialisée
     }
+
     else {
         jeu = init_Partie_ang();
+        // Une partie avec le dictionnaire uk est initialisée
     }
 }
 
 
 /*
- * Rôle : Lance une nouvelle partie du jeu
+ * Rôle : Réinitialise le jeu pour une nouvelle partie 
 */
 
 void rejouer(Widget w, void *d){
-    //J'ai ajouté cette ligne, car il faut libérer la mémoire de la partie précédente avant d'en initialiser une nouvelle
-       if (jeu) {
+    if (jeu) {
         //Presence d'une partie 
         quitter_partie(jeu);
         jeu = NULL;
-    } // Libère la mémoire de la partie précédente
+    } // Libère la mémoire de la partie précédente avant d'en allouer à une nouvelle
     clearHangman(); // Efface le dessin du pendu
-    initGame(); 
-    AfficherLettres();
+    initGame(); //une nouvelle partie est initialisée
+    AfficherLettres(); //mis à jour de l'affichage 
     SetStringEntry(ZoneSaisie, ""); // Efface la saisie
-
-    //CloseWindow();
 }
+
 /*
-  Rôle :Menu, affiche une fenetre avec les options
- 
+ * Rôle :Affiche une fenêtre pour le choix des langues(menu) avec 
+ *     * Un label descriptif
+ *     * Boutons Français, Bouton Anglais et Bouton Annuler
 */
 void menu(Widget w, void *d){
     // Logique pour afficher le menu :
+    // Création de la fenêtre
     MakeWindow("Langues préférées", SAME_DISPLAY, EXCLUSIVE_WINDOW);
-   
+
+
+    // Création du label descriptif centré
     descriptif = MakeLabel("Selectionnez votre langue preferee :");
     SetWidgetPos(descriptif, PLACE_UNDER, w, NO_CARE, NULL);
    
+    // Création des boutons pour la  sélection de la  langue
     Widget BLangue_fr = MakeButton("    Francais    ", setLangue_fr, NULL);
     Widget BLangue_uk = MakeButton("    Anglais    ", setLangue_uk, d);
     Widget BAnnuler = MakeButton("    Annuler    ", annuler, NULL);
-    // Widget BErreurs= MakeButton("Configurer l'erreur  maximum ", erreur, NULL);
 
     SetWidgetPos(BLangue_fr, PLACE_UNDER, descriptif, NO_CARE, NULL);
+    // Bouton "Français" sous le label descriptif
     SetWidgetPos(BLangue_uk, PLACE_RIGHT, BLangue_fr, PLACE_UNDER, descriptif);
+    // Bouton "Anglais" à droite du bouton Français
     SetWidgetPos(BAnnuler, PLACE_UNDER, BLangue_fr, NO_CARE, NULL);
+    //Bouton Annuler sous le bouton Français
 
-   // SetWidgetPos(BErreurs, PLACE_UNDER, BAnnuler, NO_CARE, NULL);
 
     ShowDisplay();
     MainLoop();
 }
 
 
-
 /*
- * Menu "Aide" pour afficher les règles du jeu
+ * Rôle: Menu "Aide" affiche les règles du jeu et ouvre l'URL dans le navigateur par défaut
 */
-
-//static Widget explication;
-
 void aide(Widget w, void *d){
     GetOkay(
     "Bienvenue dans le jeu du Pendu !\n\n"
@@ -202,74 +183,84 @@ void aide(Widget w, void *d){
     "Si tu veux en savoir plus sur le jeu, n'hesite pas a te rendre sur la page Wikipedia ouverte dans ton navigateur. \n"
     "Bonne chance !\n\n"
     );
-    //MakeWindow("Aide", SAME_DISPLAY, EXCLUSIVE_WINDOW);
-    //explication = MakeTextWidget("aide.txt", 0, 0, 300, 200);
-    //Widget BOK = MakeButton("OK", annuler, NULL);
-    //SetWidgetPos(explication, PLACE_UNDER, BOK, NO_CARE, NULL);
-    //SetWidgetPos(BOK, PLACE_UNDER, explication, NO_CARE, NULL); // Bouton OK sous les explications
-    //ShowDisplay();
-    //MainLoop();
     system("xdg-open 'https://fr.wikipedia.org/wiki/Jeu_du_pendu' &");
 }
-
+/*
+ * Rôle : Gère la saisie d'une lettre par le joueur lors de la partie 
+ *        Si la partie est terminée => ignore la saisie
+ *        Si caractère invalide => affiche un message d'erreur
+ *        Si lettre valide => Met à jour l'état du jeu  Gère les deux cas (victoire ou défaite)
+ * Antécédents : la partie doit être initialisée
+ */
 void saisie(Widget w, char* key , void *d) {
   printf("Nombre d'erreurs maximum : %d\n", get_erreur_max());
   if (terminee(jeu)){
-   // Vider à chaque fois que le joueur tente de saisir 
+    //La partie est terminée
     SetStringEntry(ZoneSaisie, ""); 
+    //la saisie n'est pas prise en compte
    return; 
- }
+  }
+  //La partie n'est pas terminée
 
+  //Convertir la lettre en minuscule
   char lettre = tolower(key[0]);
-//IMPORTANT SI ON RENTRE AUTRE CHOSE QU'UNE LETTRE
+  
   if (!isalpha(lettre)) {
+    //Le boutton préssé sur le clavier n'est pas une lettre 
         GetOkay("Veuillez saisir une lettre a-z");
+        //Message à l'utilisateur 
         SetStringEntry(ZoneSaisie, "");
+        //la saisie n'est pas prise en compte
         return;
     }
+  //L'utilisateur a saisi une lettre alphabétique
   else if ( key&&key[0]!= '\0') {
+    //
     int valide = validite_lettre(jeu,lettre);  // Met à jour le mot et les erreurs
     if (valide==2) {
+      //La partie est terminée, le nombre d'erreurs maximum est atteint
       char message[256];
       snprintf(message, sizeof(message),
           "PERDU!!!\n\n"
           "En appuyant sur Okay, vous relancez une partie !\n\n"
-          "Pour changer de langue, clique sur le bouton Menu en haut a gauche.\n\n"
+          "Pour changer de langue, cliquez sur le bouton Menu en haut a gauche.\n\n"
           "Pour quitter le jeu, cliquez sur la croix en haut a droite.\n\n"
           "Le mot est : %s\n\n",
           get_mot_cherche(jeu)
       );
       GetOkay(message);
-      //Vider à chaque fois que le joueur tente de saisir 
-      SetStringEntry(ZoneSaisie, ""); 
+      //Message de fin de partie et possibilité de rejouer via le bouton OKAY
+      SetStringEntry(ZoneSaisie, "");
+       //la saisie n'est plus  prise en compte => fin de la partie 
       rejouer(w, d); // Relance une nouvelle partie
-      //Vider à chaque fois que le joueur tente de saisir 
-      //SetStringEntry(ZoneSaisie, ""); 
       return; 
     }
-    AfficherLettres();  
+
+    AfficherLettres(); //mettre à jour l'affichage du mot 
     SetStringEntry(ZoneSaisie, ""); // Vide la zone de saisie après chaque lettre
     // Mettre à jour la zone de dessin après chaque saisie
     updateDrawHangman(erreurs(jeu));
-              //==============AJOUTER ICI LA MISE À JOUR DE ZONEDESSIN==============
 
   }
-     // Si la partie est gagnée
+   //la partie n'est pas perdue
+   
     if (terminee(jeu) && gagnee(jeu)) {
+      //la partie est terminée et l'utilisateur à gagnée la partie 
       char message_gagne[256];
       snprintf(message_gagne, sizeof(message_gagne),
-          "BRAVO !!!! Vous avez gagne ! "
+          "BRAVO !!!! Vous avez gagné la partie  ! "
           "En appuyant sur Okay, vous relancez une partie !\n\n"
-          "Pour changer de langue, clique sur le bouton Menu en haut a gauche.\n\n"
+          "Pour changer de langue, cliquez sur le bouton Menu en haut a gauche.\n\n"
           "Pour quitter le jeu, cliquez sur la croix en haut a droite.\n\n"
           "Le mot est : %s\n\n",
           get_mot_cherche(jeu) );
         GetOkay(message_gagne);
-      //Vider à chaque fois que le joueur tente de saisir 
+        //Message de fin de partie et possibilité de rejouer via le bouton OKAY
+
       SetStringEntry(ZoneSaisie, ""); 
+      //la saisie n'est plus prise en compte=>fin de la partie 
+
       rejouer(w, d); // Relance une nouvelle partie
-      //Vider à chaque fois que le joueur tente de saisir 
-      //SetStringEntry(ZoneSaisie, ""); 
       return; 
     }
 }

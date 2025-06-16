@@ -1,7 +1,7 @@
 //
 // readFile.c
 //
-// Khady Ndaye DIOP & Alex MEURILLON ELSE3
+// Khady  DIOP & Alex MEURILLON ELSE3
 //
 // Ce fichier permet de lire le dictionnaire, sélectionner les mots désirés et trouver le mot pour le jeu
 // de pendu
