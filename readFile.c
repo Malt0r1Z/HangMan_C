@@ -58,6 +58,7 @@ Liste getDico(const char *f){
 
 
 /*
+ * Antécédent : la liste l a été initialisée
  * Rôle : Renvoie, de manière pseudo-aléatoire, un mot parmi la liste l passée en paramètre
  */
 char* randomMot(const Liste l){
