@@ -191,7 +191,6 @@ void aide(Widget w, void *d){
  * Antécédents : la partie doit être initialisée
  */
 void saisie(Widget w, char* key , void *d) {
-  printf("Nombre d'erreurs maximum : %d\n", get_erreur_max());
   if (terminee(jeu)){
     // La partie est terminée
     SetStringEntry(ZoneSaisie, ""); 
