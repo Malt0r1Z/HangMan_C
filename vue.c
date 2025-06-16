@@ -1,8 +1,8 @@
-/*
- * vue.c
- *
- * Khady DIOP & Alex MEURILLON ELSE3
-*/
+//
+// vue.c
+// 
+// Khady DIOP & Alex MEURILLON ELSE3
+//
 
 #include <stdio.h>
 #include <stdlib.h>

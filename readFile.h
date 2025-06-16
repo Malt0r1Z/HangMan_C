@@ -7,7 +7,7 @@
 
 #include "liste.h"
 
-typedef Liste Dictionnaire;
+//typedef Liste Dictionnaire;
 
 extern Liste getDico(const char*);
 extern char* randomMot(const Liste);
