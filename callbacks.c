@@ -65,7 +65,6 @@ void bouton_cb(Widget w, void *d) {
     char *difficulte = (char*)d;
     CloseWindow();
     setErreur(difficulte);
-    printf("Difficulté choisie : %s\n", difficulte);
   }
 }
 

@@ -22,7 +22,6 @@ static int ERREUR_MAXIMUM = 8; // Constante maximum d'erreurs autorisées. Par d
  *        Antécédent : le dictionnaire doit exister et contenir des mots valides
 */
 Partie *init_Partie(char *dictionnaire) {
-    printf("J'init_Partie\n");
     Partie *p = malloc(sizeof(Partie));
     if (!p) return NULL;
     // Récuperation du mot et sélection d'un mot aléatoire
