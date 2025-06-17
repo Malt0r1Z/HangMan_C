@@ -196,7 +196,7 @@ int validite_lettre(Partie *p,char choix) {
   }
     // Vérifier si le mot est complet
     if (gagnee(p)) {
-        valide =1; // 1 si gagné
+        valide =1; // 1 si la partie est gagnée
     }
     return valide;
 

@@ -31,25 +31,27 @@ static void annuler(Widget w, void *d){
 }
 
 /*
- * Rôle : Configure une partie avec le dictionnaire français et lance la partie
- *      Affiche un message de confirmation et relance le jeu avec la langue sélectionnée
+ * Rôle : Configure une partie avec le dictionnaire français,ferme la fenêtre et lance la partie
+ *      
 */
 static void setLangue_fr(Widget w, void *d){
     choix_langue = "francais";
-    GetOkay("Dictionnaire selectionnee : francais");
-    rejouer(w, d);
+    CloseWindow();
+    rejouer(w, d); //lancer une nouvelle partie 
 }
+
 
 
 /*
- * Rôle : Configure une partie avec  le dictionnaire  anglais  et lance la partie
- *      Affiche un message de confirmation et relance le jeu avec la langue sélectionnée
+ * Rôle : Configure une partie avec le dictionnaire anglais,ferme la fenêtre et lance la partie
+ *      
 */
 static void setLangue_uk(Widget w, void *d){
-  choix_langue = "Anglais";
-  GetOkay("Dictionnaire selectionnee : anglais");
-  rejouer(w, d);
+    choix_langue = "Anglais";
+    CloseWindow(); 
+    rejouer(w, d); //lancer une nouvelle  partie 
 }
+
 
 /*
  * Rôle : Callback pour configurer la difficulté
@@ -256,7 +258,7 @@ void saisie(Widget w, char* key , void *d) {
   }
   // La partie n'est pas terminée
 
-  // Convertie la lettre en minuscule
+  // conversion de  la lettre en minuscule
   char lettre = tolower(key[0]);
   
   if (!isalpha(lettre)) {
