@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <libsx.h>
 #include <ctype.h>
+#include <string.h>
 #include "callbacks.h"
 #include "data.h"
 #include "vue.h"
@@ -19,7 +20,7 @@ Partie *jeu = NULL;
 // Pointeur pour stocker le choix de langue,français par defaut 
 char *choix_langue = "francais"; 
 
-//Widget static pour les descriptions
+// Widget static pour les descriptions
 static Widget descriptif;
 
 /*
@@ -36,7 +37,7 @@ static void annuler(Widget w, void *d){
 static void setLangue_fr(Widget w, void *d){
     choix_langue = "francais";
     GetOkay("Dictionnaire selectionnee : francais");
-    rejouer(NULL, NULL);
+    rejouer(w, d);
 }
 
 
@@ -47,7 +48,7 @@ static void setLangue_fr(Widget w, void *d){
 static void setLangue_uk(Widget w, void *d){
   choix_langue = "Anglais";
   GetOkay("Dictionnaire selectionnee : anglais");
-  rejouer(NULL, NULL);
+  rejouer(w, d);
 }
 
 /*
@@ -90,9 +91,8 @@ void choix_difficulte(Widget w, void *d) {
 
 }
 
-
 /*
-Rôle : Initialisation du jeu en fonction du dictionnaire choisi
+ * Rôle : Initialisation du jeu en fonction du dictionnaire choisi
 */
 void initGame() {
     // Libération de l'ancienne partie si elle existe
@@ -102,7 +102,6 @@ void initGame() {
         //La partie existante est libérée 
         jeu = NULL;
     }
-    
     // Initialisation d'une nouvelle partie avec le bon dictionnaire 
     if (strcmp(choix_langue,"francais") == 0) {
         jeu = init_Partie_fr();
@@ -115,6 +114,18 @@ void initGame() {
     }
 }
 
+
+/*
+  * Rôle : Ferme la fenêtre de jeu et relance une nouvelle partie
+  *        Affiche un message de confirmation avant de relancer le jeu
+  * Antécédents : La partie doit être initialisée 
+*/
+static void rejouer_fin_partie(Widget w, void *d){
+    CloseWindow();
+    // Ferme la fenêtre de fin de partie
+    rejouer(w, d);
+    // Relance une nouvelle partie
+}
 
 /*
  * Rôle : Réinitialise le jeu pour une nouvelle partie 
@@ -139,7 +150,7 @@ void rejouer(Widget w, void *d){
 void menu(Widget w, void *d){
     // Logique pour afficher le menu :
     // Création de la fenêtre
-    MakeWindow("Langues préférées", SAME_DISPLAY, EXCLUSIVE_WINDOW);
+    MakeWindow("Langues preferees", SAME_DISPLAY, EXCLUSIVE_WINDOW);
 
 
     // Création du label descriptif centré
@@ -183,13 +194,59 @@ void aide(Widget w, void *d){
 }
 
 
+
+/*
+ * Rôle : Affiche un message de fin de partie perdue
+ *        Affiche le mot à deviner et propose de rejouer
+ * Antécédents : La partie doit être initialisée 
+*/
+static void finPartiePerdue(void){
+  MakeWindow("Partie perdue", SAME_DISPLAY, EXCLUSIVE_WINDOW);
+  char message_fin[512];
+  strcpy(message_fin, "PERDU !!!\n\n"
+      "Vous avez fait trop d'erreurs, vous avez perdu la partie !\n\n"
+      "Appuyez sur Ok pour relancer une nouvelle partie !\n\n"
+      "Le mot etait : ");
+  strcat(message_fin, get_mot_cherche(jeu));
+  strcat(message_fin, "\n\n");
+  Widget message = MakeLabel(message_fin);
+  Widget okButton = MakeButton("OK", rejouer_fin_partie, NULL);
+  SetWidgetPos(okButton, PLACE_UNDER, message, NO_CARE, NULL);
+  ShowDisplay();
+  MainLoop();
+  SetStringEntry(ZoneSaisie, "");
+}
+
+/*
+ * Rôle : Affiche un message de fin de partie gagnée
+ *        Affiche le mot à deviner et propose de rejouer
+ * Antécédents : La partie doit être initialisée 
+*/
+static void finPartieGagnee(void){
+  MakeWindow("Partie gagnee", SAME_DISPLAY, EXCLUSIVE_WINDOW);
+  char message_gagne[512];
+  strcpy(message_gagne, "BRAVO !!!!\n\n"
+      "Vous avez gagne la partie !\n\n"
+      "Appuyez sur Ok pour relancer une nouvelle partie !\n\n"
+      "Le mot etait : ");
+  strcat(message_gagne, get_mot_cherche(jeu));
+  strcat(message_gagne, "\n\n");
+  Widget message = MakeLabel(message_gagne);
+  Widget okButton = MakeButton("OK", rejouer_fin_partie, NULL);
+  SetWidgetPos(okButton, PLACE_UNDER, message, NO_CARE, NULL);
+  ShowDisplay();
+  MainLoop();
+  SetStringEntry(ZoneSaisie, "");
+}
+
+
 /*
  * Rôle : Gère la saisie d'une lettre par le joueur lors de la partie 
  *        Si la partie est terminée => ignore la saisie
  *        Si caractère invalide => affiche un message d'erreur
  *        Si lettre valide => Met à jour l'état du jeu  Gère les deux cas (victoire ou défaite)
  * Antécédents : la partie doit être initialisée
- */
+*/
 void saisie(Widget w, char* key , void *d) {
   if (terminee(jeu)){
     // La partie est terminée
@@ -214,24 +271,8 @@ void saisie(Widget w, char* key , void *d) {
   else if ( key&&key[0]!= '\0') {
     int valide = validite_lettre(jeu,lettre);  // Met à jour le mot et les erreurs
     if (valide==2) {
-      // La partie est terminée, le nombre d'erreurs maximum est atteint
-      char message[256];
-      snprintf(message, sizeof(message),
-          "PERDU!!!\n\n"
-          "En appuyant sur Okay, vous relancez une partie !\n\n"
-          "Pour changer de langue, cliquez sur le bouton Menu en haut a gauche.\n\n"
-          "Pour quitter le jeu, cliquez sur la croix en haut a droite.\n\n"
-          "Le mot est : %s\n\n",
-          get_mot_cherche(jeu)
-      );
-      GetOkay(message);
-      // Message de fin de partie et possibilité de rejouer via le bouton OKAY
-      SetStringEntry(ZoneSaisie, "");
-       // La saisie n'est plus  prise en compte => fin de la partie 
-      rejouer(w, d); // Relance une nouvelle partie
-      return; 
+      finPartiePerdue();
     }
-
     AfficherLettres(); // Mettre à jour l'affichage du mot 
     SetStringEntry(ZoneSaisie, ""); // Vide la zone de saisie après chaque lettre
     // Mettre à jour la zone de dessin après chaque saisie
@@ -239,24 +280,9 @@ void saisie(Widget w, char* key , void *d) {
 
   }
    // La partie n'est pas perdue
-   
   if (terminee(jeu) && gagnee(jeu)) {
-    //la partie est terminée et l'utilisateur à gagnée la partie 
-    char message_gagne[256];
-    snprintf(message_gagne, sizeof(message_gagne),
-        "BRAVO !!!! Vous avez gagné la partie  ! "
-        "En appuyant sur Okay, vous relancez une partie !\n\n"
-        "Pour changer de langue, cliquez sur le bouton Menu en haut a gauche.\n\n"
-        "Pour quitter le jeu, cliquez sur la croix en haut a droite.\n\n"
-        "Le mot est : %s\n\n",
-        get_mot_cherche(jeu) );
-      GetOkay(message_gagne);
-      //Message de fin de partie et possibilité de rejouer via le bouton OKAY
-
-    SetStringEntry(ZoneSaisie, ""); 
-    //la saisie n'est plus prise en compte=>fin de la partie 
-
-    rejouer(w, d); // Relance une nouvelle partie
+    // la partie est terminée et l'utilisateur a gagné la partie 
+    finPartieGagnee();
     return; 
   }
 }
