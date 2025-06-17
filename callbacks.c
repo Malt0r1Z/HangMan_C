@@ -38,6 +38,7 @@ static void setLangue_fr(Widget w, void *d){
     choix_langue = "francais";
     CloseWindow();
     rejouer(w, d); //lancer une nouvelle partie 
+     GetOkay("Dictionnaire sélectionné:Français");
 }
 
 
@@ -50,6 +51,8 @@ static void setLangue_uk(Widget w, void *d){
     choix_langue = "Anglais";
     CloseWindow(); 
     rejouer(w, d); //lancer une nouvelle  partie 
+    GetOkay("Dictionnaire sélectionné:Anglais");
+
 }
 
 
