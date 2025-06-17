@@ -38,10 +38,8 @@ static void setLangue_fr(Widget w, void *d){
     choix_langue = "francais";
     CloseWindow();
     rejouer(w, d); //lancer une nouvelle partie 
-     GetOkay("Dictionnaire sélectionné:Français");
+     GetOkay("Dictionnaire selectionne:Francais");
 }
-
-
 
 /*
  * Rôle : Configure une partie avec le dictionnaire anglais,ferme la fenêtre et lance la partie
@@ -51,10 +49,9 @@ static void setLangue_uk(Widget w, void *d){
     choix_langue = "Anglais";
     CloseWindow(); 
     rejouer(w, d); //lancer une nouvelle  partie 
-    GetOkay("Dictionnaire sélectionné:Anglais");
+    GetOkay("Dictionnaire selectionne:Anglais");
 
 }
-
 
 /*
  * Rôle : Callback pour configurer la difficulté
