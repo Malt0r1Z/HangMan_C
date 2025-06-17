@@ -38,7 +38,7 @@ static void setLangue_fr(Widget w, void *d){
     choix_langue = "francais";
     CloseWindow();
     rejouer(w, d); //lancer une nouvelle partie 
-     GetOkay("Dictionnaire selectionne:Francais");
+    GetOkay("Dictionnaire selectionne : francais");
 }
 
 /*
@@ -49,7 +49,7 @@ static void setLangue_uk(Widget w, void *d){
     choix_langue = "Anglais";
     CloseWindow(); 
     rejouer(w, d); //lancer une nouvelle  partie 
-    GetOkay("Dictionnaire selectionne:Anglais");
+    GetOkay("Dictionnaire selectionne : anglais");
 
 }
 
@@ -60,7 +60,7 @@ void bouton_cb(Widget w, void *d) {
   if (erreurs(jeu)>2){
     //le nombre d'erreurs doit etre inférieur ou égale à 2 pour modifier la difficulté
     GetOkay("Vous ne pouvez plus modifier le nombre d'erreurs maximum, "
-      "car vous avez deja commence une partie.");
+      "car vous etes deja bien avance dans la partie.");
     CloseWindow();
   }
   else {
@@ -120,7 +120,7 @@ void initGame() {
 /*
   * Rôle : Ferme la fenêtre de jeu et relance une nouvelle partie
   *        Affiche un message de confirmation avant de relancer le jeu
-  * Antécédents : La partie doit être initialisée 
+  * Antécédent : La partie doit être initialisée 
 */
 static void rejouer_fin_partie(Widget w, void *d){
     CloseWindow();
@@ -204,7 +204,7 @@ void aide(Widget w, void *d){
 /*
  * Rôle : Affiche un message de fin de partie perdue
  *        Affiche le mot à deviner et propose de rejouer
- * Antécédents : La partie doit être initialisée 
+ * Antécédent : La partie doit être initialisée 
 */
 static void finPartiePerdue(void){
   MakeWindow("Partie perdue", SAME_DISPLAY, EXCLUSIVE_WINDOW);
@@ -226,7 +226,7 @@ static void finPartiePerdue(void){
 /*
  * Rôle : Affiche un message de fin de partie gagnée
  *        Affiche le mot à deviner et propose de rejouer
- * Antécédents : La partie doit être initialisée 
+ * Antécédent : La partie doit être initialisée 
 */
 static void finPartieGagnee(void){
   MakeWindow("Partie gagnee", SAME_DISPLAY, EXCLUSIVE_WINDOW);
@@ -251,7 +251,7 @@ static void finPartieGagnee(void){
  *        Si la partie est terminée => ignore la saisie
  *        Si caractère invalide => affiche un message d'erreur
  *        Si lettre valide => Met à jour l'état du jeu  Gère les deux cas (victoire ou défaite)
- * Antécédents : la partie doit être initialisée
+ * Antécédent : la partie doit être initialisée
 */
 void saisie(Widget w, char* key , void *d) {
   if (terminee(jeu)){

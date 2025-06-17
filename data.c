@@ -19,7 +19,7 @@ static int ERREUR_MAXIMUM = 8; // Constante maximum d'erreurs autorisées. Par d
 /*
  * Rôle : Initialise une nouvelle partie en utilisant le dictionnaire spécifié en paramètres 
  *         et renvoie un pointeur vers la structure Partie initialisée
- *        Antécédent : le dictionnaire doit exister et contenir des mots valides
+ * Antécédent : le dictionnaire doit exister et contenir des mots valides
 */
 Partie *init_Partie(char *dictionnaire) {
     Partie *p = malloc(sizeof(Partie));
@@ -204,7 +204,7 @@ int validite_lettre(Partie *p,char choix) {
 
 /*
  * Rôle : Définit le nombre maximum d'erreurs autorisées
- *  Antécédent : valeur doit être un entier positif 6<=valeur<=8
+ * Antécédent : valeur doit être un entier positif 6<=valeur<=8
 */
 void setErreur_max(int valeur) {
     ERREUR_MAXIMUM = valeur;

@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
       return EXIT_FAILURE;
     }
 
-    // créer l'IG et l'afficher à l'écran
+    // Création de l'interface graphique et affichage à l'écran
     init_display(argc, argv, NULL);
     // Affichage du menu principal
     MainLoop();
