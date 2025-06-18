@@ -12,4 +12,6 @@ Si c'est le cas, privilégié ces 2 commandes qui permettent de rediriger la sor
 $ make
 $ ./hangman 2>/dev/null
 
+Dans les fenêtres Okay (Aide & Sélection de langue), si vous n’êtes pas d’accord avec les règles, il suffit d’appuyer sur le bouton fermé en haut à droite. Sinon, appuyez simplement sur Okay !
+
 Enjoy !
